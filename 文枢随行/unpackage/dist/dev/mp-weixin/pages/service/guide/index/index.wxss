@@ -1,0 +1,219 @@
+
+.page.data-v-a8843254 {
+  width: 100%;
+  min-height: 100vh;
+  background: #F8F9FA;
+  padding-bottom: 32px;
+}
+.nav.data-v-a8843254 {
+  height: 48px;
+  background: linear-gradient(90deg, #4CAF50, #66BB6A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: none;
+}
+.back-btn.data-v-a8843254 {
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: absolute;
+  left: 16px;
+  top: 8px;
+}
+.back-btn.data-v-a8843254:active {
+  opacity: 0.7;
+  background: rgba(255,255,255,0.15);
+}
+.filter-btn.data-v-a8843254 {
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 6px 12px;
+  border-radius: 16px;
+  position: absolute;
+  right: 16px;
+  top: 8px;
+}
+.filter-btn.data-v-a8843254:active {
+  background: rgba(255,255,255,0.15);
+}
+.guide-search.data-v-a8843254 {
+  padding: 16px;
+}
+.guide-search-box.data-v-a8843254 {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.guide-search-box.data-v-a8843254:active {
+  transform: scale(0.98);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.guide-search-icon.data-v-a8843254 {
+  font-size: 16px;
+  color: #6C757D;
+  margin-right: 8px;
+}
+.guide-search-placeholder.data-v-a8843254 {
+  font-size: 14px;
+  color: #6C757D;
+}
+.guide-section.data-v-a8843254 {
+  background: #fff;
+  margin: 0 16px 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.guide-section-title.data-v-a8843254 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #F1F3F5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.guide-section-subtitle.data-v-a8843254 {
+  font-size: 12px;
+  font-weight: 400;
+  color: #6C757D;
+}
+.guide-list.data-v-a8843254 {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.guide-item.data-v-a8843254 {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #F8F9FA;
+  border-radius: 8px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.guide-item.data-v-a8843254:active {
+  background: #E9ECEF;
+  transform: scale(0.98);
+}
+.guide-item-avatar.data-v-a8843254 {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #E8F5E9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+.guide-item-avatar img.data-v-a8843254 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.guide-item-content.data-v-a8843254 {
+  flex: 1;
+}
+.guide-item-header.data-v-a8843254 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.guide-item-name.data-v-a8843254 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212529;
+}
+.guide-item-badge.data-v-a8843254 {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: #E8F5E9;
+  color: #2E7D32;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.guide-item-tags.data-v-a8843254 {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.guide-item-tag.data-v-a8843254 {
+  font-size: 12px;
+  padding: 4px 12px;
+  background: #E3F2FD;
+  color: #1976D2;
+  border-radius: 12px;
+  font-weight: 500;
+}
+.guide-item-stats.data-v-a8843254 {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #6C757D;
+}
+.guide-item-rating.data-v-a8843254 {
+  color: #FFC107;
+  font-weight: 500;
+}
+.guide-item-distance.data-v-a8843254 {
+  color: #6C757D;
+}
+.guide-item-info.data-v-a8843254 {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #495057;
+}
+.guide-item-price.data-v-a8843254 {
+  font-weight: 500;
+  color: #F44336;
+}
+.guide-item-experience.data-v-a8843254 {
+  color: #6C757D;
+}
+.guide-item-call.data-v-a8843254 {
+  width: 36px;
+  height: 36px;
+  background: #E8F5E9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2E7D32;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-top: 12px;
+}
+.guide-item-call.data-v-a8843254:active {
+  background: #C8E6C9;
+  transform: scale(1.1);
+}

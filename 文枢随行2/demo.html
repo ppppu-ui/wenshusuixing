@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随行文旅微信小程序 - 全功能原型</title>
+    <style>
+ /* ==============================================
+   随行文旅小程序 - 轻国风UI优化版
+   风格：清新自然 | 文旅轻国风 | 简约高级
+   适配：375×812 微信小程序标准尺寸
+   无改动结构/功能/交互，仅优化视觉样式
+============================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.3px;
+}
+
+body {
+    background: #F8F9FA;
+    padding: 20px 0;
+}
+
+/* 手机容器 */
+.phone {
+    width: 375px;
+    height: 812px;
+    margin: 0 auto;
+    border: 12px solid #2c3e50;
+    border-radius: 40px;
+    position: relative;
+    overflow: hidden;
+    background: #F8F9FA;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+/* 页面基础 */
+.page {
+    width: 100%;
+    height: calc(100% - 56px);
+    overflow-y: auto;
+    display: none;
+    padding-bottom: 20px;
+    scroll-behavior: smooth;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    opacity: 0;
+    transform: translateX(10px);
+    background: #F8F9FA;
+}
+
+.page.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.no-tab .tab { display: none; }
+.no-tab .page { height: 100%; }
+
+/* ==============================================
+   1. 全局通用组件 - 全页面复用优化
+============================================== */
+/* 导航栏 - 青绿渐变 + 轻阴影 */
+.nav {
+    height: 48px;
+    background: linear-gradient(90deg, #4CAF50, #66BB6A);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: none;
+}
+
+.nav-center { justify-content: center; }
+
+.nav-btn {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.nav-btn:active { opacity: 0.7; }
+
+.back-btn {
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.back-btn:active {
+    opacity: 0.7;
+    background: rgba(255,255,255,0.15);
+}
+
+/* 搜索框 - 内凹轻质感 */
+.search {
+    margin: 12px 16px;
+    height: 44px;
+    background: #F5F7FA;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    border: 1px solid #E9ECEF;
+    transition: all 0.2s;
+}
+
+.search:focus-within {
+    border-color: #4CAF50;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(76,175,80,0.1);
+}
+
+.search::before {
+    content: "🔍";
+    margin-right: 10px;
+    color: #ADB5BD;
+    font-size: 16px;
+}
+
+.search input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    font-size: 15px;
+    color: #495057;
+}
+
+.search input::placeholder {
+    color: #ADB5BD;
+    transition: opacity 0.2s;
+}
+
+.search input:focus::placeholder { opacity: 0.5; }
+
+/* 底部TabBar - 文旅线性图标 + 选中上浮 */
+.tab {
+    height: 56px;
+    background: #fff;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #E9ECEF;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.04);
+    z-index: 99;
+}
+
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 11px;
+    color: #ADB5BD;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    width: 60px;
+    height: 44px;
+    justify-content: center;
+    gap: 4px;
+}
+
+.tab-item.active {
+    color: #4CAF50;
+    transform: translateY(-2px);
+}
+
+.tab-item::before {
+    font-size: 22px;
+    display: block;
+}
+
+/* 文旅特色图标替换 */
+.tab-item:nth-child(1)::before { content: "🧭"; } /* 发现=指南针 */
+.tab-item:nth-child(2)::before { content: "📅"; } /* 行程=日历 */
+.tab-item:nth-child(3)::before { content: "🚩"; } /* 服务=向导旗 */
+.tab-item:nth-child(4)::before { content: "👤"; } /* 我的=头像 */
+
+.tab-item:active { opacity: 0.85; }
+
+/* 按钮体系 - 渐变 + 圆角 + 动效 */
+.btn {
+    display: block;
+    width: calc(100% - 32px);
+    margin: 16px auto;
+    padding: 14px;
+    text-align: center;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    user-select: none;
+    border: none;
+    line-height: 1.3;
+}
+
+.btn:active {
+    transform: scale(0.98);
+    opacity: 0.92;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #4CAF50, #66BB6A);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(76,175,80,0.2);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #495057;
+    border: 1px solid #DEE2E6;
+}
+
+.btn-secondary:active {
+    background: #F8F9FA;
+    border-color: #ADB5BD;
+}
+
+.btn-warning {
+    background: linear-gradient(90deg, #FFB74D, #FF9800);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(255,183,77,0.2);
+}
+
+.btn-danger {
+    background: #E53935;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(229,57,53,0.2);
+}
+
+/* 卡片 - 轻国风圆角 + 阴影 + 上浮 */
+.card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 16px;
+    margin: 0 16px 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: 1px solid #E9ECEF;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: #4CAF50;
+    opacity: 0.6;
+}
+
+.card:active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border-color: #DEE2E6;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 8px;
+}
+
+.card-desc {
+    font-size: 13px;
+    color: #495057;
+    line-height: 1.6;
+}
+
+/* 板块标题 - 国风分割线 + 图标 */
+.section-title {
+    margin: 20px 16px 12px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #212529;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding-left: 12px;
+}
+
+.section-title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 4px;
+    height: 16px;
+    background: #4CAF50;
+    border-radius: 2px;
+}
+
+.section-more {
+    font-size: 13px;
+    color: #4CAF50;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.section-more::after { content: "→"; font-size: 12px; }
+.section-more:active { opacity: 0.7; transform: translateX(2px); }
+
+/* 标签 - 轻国风圆角 */
+.tag {
+    display: inline-block;
+    padding: 3px 9px;
+    background: #E8F5E9;
+    color: #2E7D32;
+    font-size: 11px;
+    border-radius: 12px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.tag-blue {
+    background: #E3F2FD;
+    color: #1976D2;
+}
+
+.tag-orange {
+    background: #FFF3E0;
+    color: #F57C00;
+}
+
+/* 输入框/选择框 - 文旅图标 + 聚焦光效 */
+.form-item { margin: 0 16px 24px; }
+.form-label {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 10px;
+}
+
+.form-input, .form-select {
+    width: 100%;
+    padding: 13px 18px 13px 44px;
+    border: 1px solid #DEE2E6;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #495057;
+    transition: all 0.25s;
+    background: #fff;
+    position: relative;
+}
+
+.form-input:focus, .form-select:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76,175,80,0.12);
+    outline: none;
+}
+
+.form-input::placeholder { color: #ADB5BD; }
+
+/* ==============================================
+   2. 核心页面 - 精细化轻国风优化
+============================================== */
+/* ---------- 首页（发现页） ---------- */
+.home-banner {
+    margin: 16px;
+    height: 150px;
+    background: linear-gradient(90deg, #4CAF50, #66BB6A);
+    background-image: linear-gradient(90deg, #4CAF50, #66BB6A), url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23 11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29-22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-banner::after {
+    content: "☁️";
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 24px;
+    opacity: 0.4;
+}
+
+.home-banner:active { transform: scale(0.985); }
+.home-banner span {
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 8px;
+    opacity: 0.9;
+}
+
+.home-func {
+    display: flex;
+    margin: 0 16px;
+    gap: 12px;
+}
+
+.home-func-item {
+    flex: 1;
+    height: 88px;
+    background: #fff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    font-size: 14px;
+    color: #212529;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid #E9ECEF;
+    gap: 8px;
+}
+
+.home-func-item:active {
+    transform: scale(0.96);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.home-func-item::before { font-size: 26px; }
+.home-func-item:nth-child(1) { color: #36BFFA; }
+.home-func-item:nth-child(2) { color: #FFB74D; }
+.home-func-item:nth-child(3) { color: #4CAF50; }
+
+/* ---------- 行程详情页 ---------- */
+.trip-detail-header {
+    padding: 20px 16px;
+    background: linear-gradient(180deg, #E8F5E9, #F1F8E9);
+    border-radius: 0 0 20px 20px;
+}
+
+.trip-detail-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 10px;
+}
+
+.trip-detail-info {
+    font-size: 13px;
+    color: #495057;
+    display: flex;
+    gap: 16px;
+}
+
+.trip-budget {
+    margin: 16px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #E9ECEF;
+    position: relative;
+}
+
+.trip-budget::before {
+    content: "💰";
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 20px;
+    opacity: 0.3;
+}
+
+.trip-budget-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 10px;
+}
+
+.trip-budget-num {
+    font-size: 26px;
+    font-weight: 700;
+    color: #4CAF50;
+    margin-bottom: 12px;
+}
+
+.trip-budget-progress {
+    height: 7px;
+    background: #E9ECEF;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.trip-budget-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #66BB6A);
+    width: 60%;
+    border-radius: 4px;
+}
+
+.trip-day {
+    margin: 0 16px 12px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #E9ECEF;
+    overflow: hidden;
+}
+
+.trip-day-title {
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #212529;
+    border-bottom: 1px solid #F1F3F5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #F8F9FA;
+}
+
+.trip-day-item {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #F1F3F5;
+    transition: background 0.2s;
+}
+
+.trip-day-item:nth-child(even) { background: #FDFDFD; }
+.trip-day-item:last-child { border-bottom: none; }
+
+.trip-day-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.trip-day-drag {
+    color: #ADB5BD;
+    font-size: 18px;
+}
+
+.trip-day-del {
+    color: #E53935;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.trip-day-del:active {
+    background: #FFEBEE;
+    transform: scale(1.1);
+}
+
+/* ---------- 服务页 - 紧急服务 + 问答 ---------- */
+.service-urgent {
+    display: flex;
+    margin: 16px;
+    gap: 12px;
+}
+
+.service-urgent-item {
+    flex: 1;
+    padding: 22px 16px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.25s;
+    border: 1px solid #E9ECEF;
+}
+
+.service-urgent-item:active { transform: scale(0.97); }
+
+.service-urgent-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+}
+
+.service-urgent-icon-sos {
+    background: linear-gradient(180deg, #E53935, #D32F2F);
+}
+
+.service-urgent-icon-guide {
+    background: linear-gradient(180deg, #FFB74D, #FF9800);
+}
+
+.service-urgent-text { flex: 1; }
+.service-urgent-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 6px;
+}
+
+.service-urgent-desc {
+    font-size: 12px;
+    color: #495057;
+}
+
+/* 问答模块 */
+.qa-ask-box {
+    margin: 16px;
+    height: 52px;
+    background: #fff;
+    border-radius: 26px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid #E9ECEF;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.qa-ask-box:active {
+    background: #F8F9FA;
+    transform: scale(0.98);
+}
+
+.qa-ask-box::before {
+    content: "🙋";
+    margin-right: 12px;
+    font-size: 18px;
+    color: #36BFFA;
+}
+
+.qa-ask-text {
+    font-size: 15px;
+    color: #ADB5BD;
+}
+
+.qa-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 16px;
+    margin: 0 16px 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid #E9ECEF;
+}
+
+.qa-item:active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.qa-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.qa-item-user {
+    font-size: 12px;
+    color: #ADB5BD;
+}
+
+.qa-item-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 10px;
+}
+
+.qa-item-answerer {
+    font-size: 13px;
+    color: #36BFFA;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.qa-item-answerer::after {
+    content: "✅";
+    font-size: 10px;
+}
+
+.qa-item-answer {
+    font-size: 14px;
+    color: #495057;
+    background: #F5F7FA;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 8px;
+    line-height: 1.6;
+    border-left: 3px solid #36BFFA;
+}
+
+/* ---------- 打卡/藏品页 ---------- */
+.checkin-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 0 16px 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid #E9ECEF;
+}
+
+.checkin-item:active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.checkin-img {
+    width: 84px;
+    height: 84px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #F5F7FA, #E9ECEF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ADB5BD;
+    font-size: 14px;
+    border: 1px solid #DEE2E6;
+}
+
+.checkin-info { flex: 1; }
+.checkin-reward {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #4CAF50;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.checkin-btn {
+    align-self: flex-end;
+    padding: 8px 14px;
+    background: linear-gradient(90deg, #FFB74D, #FF9800);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 2px 6px rgba(255,183,77,0.2);
+}
+
+.checkin-btn:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+}
+
+/* 打卡成功页 */
+.checkin-success {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 0 40px;
+    text-align: center;
+    position: relative;
+}
+
+.checkin-success::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.866 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23 11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29-22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%234CAF50' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.checkin-success-icon {
+    font-size: 70px;
+    color: #4CAF50;
+    margin-bottom: 24px;
+    animation: pop 0.4s ease;
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.checkin-success-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.checkin-success-desc {
+    font-size: 15px;
+    color: #495057;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+}
+
+/* 数字藏品馆 */
+.nft-header {
+    padding: 24px 16px;
+    background: linear-gradient(180deg, #263238, #37474F);
+    color: #fff;
+    text-align: center;
+    position: relative;
+}
+
+.nft-header::after {
+    content: "🎑";
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 24px;
+    opacity: 0.2;
+}
+
+.nft-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.nft-count {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.nft-tab {
+    display: flex;
+    background: #fff;
+    border-bottom: 1px solid #E9ECEF;
+}
+
+.nft-tab-item {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    font-size: 15px;
+    color: #ADB5BD;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+}
+
+.nft-tab-item.active {
+    color: #4CAF50;
+}
+
+.nft-tab-item.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: #4CAF50;
+    border-radius: 2px;
+}
+
+.nft-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 0 16px 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid #E9ECEF;
+    position: relative;
+}
+
+.nft-item::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px dashed #E9ECEF;
+    border-radius: 8px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.nft-item:active {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+}
+
+.nft-img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #F5F7FA, #E9ECEF);
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ADB5BD;
+    font-size: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.nft-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 8px;
+}
+
+.nft-tag {
+    font-size: 13px;
+    color: #36BFFA;
+    font-weight: 600;
+}
+
+/* ---------- 个人中心 ---------- */
+.user-header {
+    background: linear-gradient(180deg, #4CAF50, #388E3C);
+    background-image: linear-gradient(180deg, #4CAF50, #388E3C), url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.866 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23 11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29-22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+    padding: 50px 20px 36px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+}
+
+.user-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: #fff;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #4CAF50;
+    border: 4px solid rgba(255,255,255,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.user-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.user-level {
+    display: inline-block;
+    padding: 4px 14px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 20px;
+    font-size: 12px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.user-data {
+    display: flex;
+    justify-content: space-around;
+}
+
+.user-data-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-data-num {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.user-data-text {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.user-assets {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;
+    background: #fff;
+    margin: 12px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.user-assets-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-assets-icon {
+    font-size: 26px;
+    color: #4CAF50;
+    margin-bottom: 10px;
+    width: 50px;
+    height: 50px;
+    background: rgba(76,175,80,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-assets-num {
+    font-size: 18px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+.user-assets-text {
+    font-size: 12px;
+    color: #ADB5BD;
+}
+
+.user-menu {
+    background: #fff;
+    margin-top: 12px;
+    border-radius: 12px;
+    margin: 12px 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.user-menu-item {
+    padding: 18px 20px;
+    border-bottom: 1px solid #F1F3F5;
+    font-size: 16px;
+    color: #212529;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+}
+
+.user-menu-item:last-child { border-bottom: none; }
+.user-menu-item:active { background: #F8F9FA; }
+.user-menu-item::after {
+    content: "›";
+    font-size: 20px;
+    color: #ADB5BD;
+    font-weight: 700;
+}
+
+.user-menu-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 24px;
+    background: #4CAF50;
+    border-radius: 0 2px 2px 0;
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+
+.user-menu-item:active::before { opacity: 1; }
+
+/* ---------- 新增详情页样式（保留原有结构，优化视觉） ---------- */
+.checkin-detail-banner {
+    height: 220px;
+    background: linear-gradient(180deg, #F5F7FA, #E9ECEF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ADB5BD;
+    font-size: 16px;
+    position: relative;
+}
+
+.checkin-detail-banner::after {
+    content: "🏮";
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 30px;
+    opacity: 0.1;
+}
+
+.checkin-detail-info {
+    padding: 20px 16px;
+    background: #fff;
+}
+
+.checkin-detail-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 10px;
+}
+
+.checkin-detail-location {
+    font-size: 15px;
+    color: #495057;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.checkin-detail-reward {
+    padding: 16px;
+    background: linear-gradient(180deg, #E8F5E9, #F1F8E9);
+    border-radius: 12px;
+    margin: 16px 0;
+    border: 1px solid rgba(76,175,80,0.1);
+}
+
+.checkin-detail-rule {
+    padding: 20px 16px;
+    background: #fff;
+    margin-top: 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.qa-detail-question {
+    padding: 22px 16px;
+    background: #fff;
+    border-bottom: 1px solid #E9ECEF;
+}
+
+.qa-detail-answer-box {
+    padding: 20px 16px;
+    background: #F5F7FA;
+    margin: 0 16px 12px;
+    border-radius: 12px;
+    border-left: 4px solid #36BFFA;
+}
+
+.qa-detail-comment {
+    padding: 16px;
+    background: #fff;
+    margin: 0 16px 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* ---------- 其他页面统一优化 ---------- */
+.map-box {
+    width: 100%;
+    height: 320px;
+    background: linear-gradient(180deg, #E9ECEF, #DEE2E6);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ADB5BD;
+    font-size: 16px;
+}
+
+.map-location {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    color: #E53935;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+}
+
+.help-header {
+    padding: 24px 16px;
+    background: linear-gradient(180deg, #E53935, #D32F2F);
+    color: #fff;
+    text-align: center;
+}
+
+.guide-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 16px;
+    margin: 0 16px 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid #E9ECEF;
+}
+
+.guide-item:active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.guide-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #F5F7FA, #E9ECEF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ADB5BD;
+    font-size: 20px;
+    border: 2px solid #E9ECEF;
+}
+
+.guide-call {
+    align-self: center;
+    padding: 10px 18px;
+    background: linear-gradient(90deg, #36BFFA, #2196F3);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 3px 8px rgba(54,191,250,0.2);
+}
+
+.guide-call:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+}
+
+.login {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 40px;
+    background: #fff;
+}
+
+.login-logo {
+    font-size: 36px;
+    font-weight: 700;
+    color: #4CAF50;
+    margin-bottom: 12px;
+}
+    </style>
+</head>
+<body>
+<div class="phone">
+    <!-- 1 登录页 -->
+    <div class="page active no-tab" id="login">
+        <div class="login">
+            <div class="login-logo">随行文旅</div>
+            <div class="login-desc">智慧旅行 · 覆盖旅行前/中/后全流程</div>
+            <div class="btn btn-primary" onclick="go('home')">微信一键授权登录</div>
+            <div class="login-daren" onclick="go('darenLogin')">本地达人/管理员请点击此处登录</div>
+        </div>
+    </div>
+
+    <!-- 2 发现页 -->
+    <div class="page" id="home">
+        <div class="nav nav-center">发现</div>
+        <div class="search">
+            <input type="text" placeholder="搜索目的地/景点/玩法">
+        </div>
+        <div class="home-banner" onclick="go('aiTrip')">
+            AI智能定制行程
+            <span>预算·兴趣·时间 → 一键生成最优方案</span>
+        </div>
+        <div class="home-func">
+            <div class="home-func-item" style="color:#2196F3" onclick="go('service')">💬 文旅服务</div>
+            <div class="home-func-item" style="color:#FF9800" onclick="go('checkin')">📍 打卡任务</div>
+            <div class="home-func-item" style="color:#4CAF50" onclick="go('darenTrip')">🌟 达人严选</div>
+        </div>
+        <div class="section-title">
+            达人严选行程
+            <span class="section-more" onclick="go('darenTrip')">更多</span>
+        </div>
+        <div class="card" onclick="go('tripDetail')">
+            <div class="card-title">西安3日非遗文化游</div>
+            <div class="card-desc">达人认证 | 兵马俑+古城墙+非遗体验 | 人均800元</div>
+            <div class="tag tag-blue">达人预审</div>
+            <div class="tag">文化游</div>
+        </div>
+        <div class="card" onclick="go('tripDetail')">
+            <div class="card-title">成都2日美食休闲游</div>
+            <div class="card-desc">达人认证 | 宽窄巷子+锦里+本地火锅 | 人均600元</div>
+            <div class="tag tag-blue">达人预审</div>
+            <div class="tag">美食游</div>
+        </div>
+        <div class="section-title">
+            热门打卡点
+            <span class="section-more" onclick="go('checkin')">更多</span>
+        </div>
+        <div class="card" onclick="go('checkinDetail')">
+            <div class="card-title">秦始皇兵马俑博物馆</div>
+            <div class="card-desc">打卡领兵马俑数字藏品 | 西安市临潼区</div>
+            <div class="tag tag-orange">非遗打卡</div>
+            <div class="tag">领藏品</div>
+        </div>
+    </div>
+
+    <!-- 3 AI行程定制 -->
+    <div class="page no-tab" id="aiTrip">
+        <div class="nav">
+            <span class="back-btn" onclick="back()">←</span>
+            AI行程定制
+            <span class="nav-btn"></span>
+        </div>
+        <div class="form-item">
+            <label class="form-label">目的地 <span style="color:#F44336">*</span></label>
+            <input type="text" class="form-input" placeholder="请输入想去的城市/景点">
+        </div>
+        <div class="form-item">
+            <label class="form-label">出行天数 <span style="color:#F44336">*</span></label>
+            <select class="form-select">
+                <option>1天</option>
+                <option selected>3天</option>
+                <option>5天</option>
+                <option>7天及以上</option>
+            </select>
+        </div>
+        <div class="form-item">
+            <label class="form-label">人均预算 <span style="color:#F44336">*</span></label>
+            <input type="text" class="form-input" placeholder="请输入预算（元），如800">
+        </div>
+        <div class="form-item">
+            <label class="form-label">出行兴趣 <span style="color:#F44336">*</span>（最多选3个）</label>
+            <div class="ai-tag-box">
+                <div class="ai-tag active">文化</div>
+                <div class="ai-tag">美食</div>
+                <div class="ai-tag">自然</div>
+                <div class="ai-tag">小众</div>
+                <div class="ai-tag">亲子</div>
+                <div class="ai-tag">徒步</div>
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="form-label">必去景点（选填）</label>
+            <input type="text" class="form-input" placeholder="请输入必去景点，多个用逗号分隔">
+        </div>
+        <div class="btn btn-primary" onclick="go('tripDetail')">生成最优行程方案</div>
+    </div>
+
+    <!-- 4 行程详情 -->
+    <div class="page" id="tripDetail">
+        <div class="nav">
+            <span class="back-btn" onclick="back()">←</span>
+            行程详情
+            <span class="nav-btn" onclick="go('map')">景区导航</span>
+        </div>
+        <div class="trip-detail-header">
+            <div class="trip-detail-title">西安3日非遗文化游</div>
+            <div class="trip-detail-info">
+                <span>人均预算：800元</span>
+                <span>达人预审：未审核</span>
+                <span>更新时间：2026-0X-0X</span>
+            </div>
+        </div>
+        <div class="trip-budget">
+            <div class="trip-budget-title">预估总预算</div>
+            <div class="trip-budget-num">¥800.00</div>
+            <div class="trip-budget-progress">
+                <div class="trip-budget-bar"></div>
+            </div>
+            <div class="card-desc" style="margin-top:8px">门票30% | 餐饮25% | 交通20% | 其他25%</div>
+        </div>
+        <div class="trip-day">
+            <div class="trip-day-title">
+                Day1 兵马俑 → 华清宫
+                <span class="nav-btn" style="font-size:12px" onclick="go('checklist')">生成Checklist</span>
+            </div>
+            <div class="trip-day-item">
+                <div class="trip-day-left">
+                    <span class="trip-day-drag">☰</span>
+                    <span>秦始皇兵马俑博物馆 | 3小时</span>
+                </div>
+                <span class="trip-day-del">×</span>
+            </div>
+            <div class="trip-day-item">
+                <div class="trip-day-left">
+                    <span class="trip-day-drag">☰</span>
+                    <span>华清宫 | 2小时</span>
+                </div>
+                <span class="trip-day-del">×</span>
+            </div>
+            <div class="trip-day-item">
+                <div class="trip-day-left">
+                    <span class="trip-day-drag">☰</span>
+                    <span>回民街美食 | 1.5小时</span>
+                </div>
+                <span class="trip-day-del">×</span>
+            </div>
+        </div>
+        <div class="trip-day">
+            <div class="trip-day-title">Day2 古城墙 → 大雁塔</div>
+            <div class="trip-day-item">
+                <div class="trip-day-left">
+                    <span class="trip-day-drag">☰</span>
+                    <span>西安古城墙骑行 | 2小时</span>
+                </div>
+                <span class="trip-day-del">×</span>
+            </div>
+            <div class="trip-day-item">
+                <div class="trip-day-left">
+                    <span class="trip-day-drag">☰</span>
+                    <span>大雁塔+大唐不夜城 | 3小时</span>
+                </div>
+                <span class="trip-day-del">×</span>
+            </div>
+        </div>
+        <div class="btn btn-primary" style="width:100%;margin:0;border-radius:0">+ 添加景点/活动</div>
+        <div class="btn btn-secondary" onclick="go('darenAudit')">提交本地达人审核</div>
+    </div>
+
+    <!-- 文旅服务 -->
+    <div class="page" id="service">
+        <div class="nav nav-center">文旅服务</div>
+        <div class="search">
+            <input type="text" placeholder="搜索问题/服务/目的地">
+        </div>
+        <div class="service-urgent">
+            <div class="service-urgent-item" onclick="go('help')">
+                <div class="service-urgent-icon service-urgent-icon-sos">🆘</div>
+                <div class="service-urgent-text">
+                    <div class="service-urgent-title">紧急求助</div>
+                    <div class="service-urgent-desc">医疗/走失/遗失求助</div>
+                </div>
+            </div>
+            <div class="service-urgent-item" onclick="go('guide')">
+                <div class="service-urgent-icon service-urgent-icon-guide">🧭</div>
+                <div class="service-urgent-text">
+                    <div class="service-urgent-title">本地向导</div>
+                    <div class="service-urgent-desc">呼叫附近专业向导</div>
+                </div>
+            </div>
+        </div>
+        <div class="qa-ask-box" onclick="go('qaAsk')">
+            <span class="qa-ask-text">你有什么旅行问题？问问本地人～</span>
+        </div>
+        <div class="section-title">热门问答</div>
+        <div class="qa-item" onclick="go('qaDetail')">
+            <div class="qa-item-header">
+                <span class="qa-item-user">游客 | 2小时前</span>
+                <span class="tag tag-blue">西安</span>
+            </div>
+            <div class="qa-item-title">西安兵马俑需要提前预约吗？现场能买票吗？</div>
+            <div class="qa-item-answerer">本地达人「西安老陕」解答</div>
+            <div class="qa-item-answer">需要提前1-3天在官方公众号预约，现场无线下票口，节假日建议更早预约，避免没票～</div>
+        </div>
+        <div class="qa-item" onclick="go('qaDetail')">
+            <div class="qa-item-header">
+                <span class="qa-item-user">游客 | 5小时前</span>
+                <span class="tag tag-blue">成都</span>
+            </div>
+            <div class="qa-item-title">成都本地人推荐的火锅店，不要网红店！</div>
+            <div class="qa-item-answerer">本地达人「成都吃货」解答</div>
+            <div class="qa-item-answer">推荐建设路的「老灶火锅」和锦里附近的「巷巷火锅」，锅底醇厚，菜品新鲜，本地人常去～</div>
+        </div>
+    </div>
+
+    <!-- 景区导航 -->
+    <div class="page no-tab" id="map">
+        <div class="nav">
+            <span class="back-btn" onclick="back()">←</span>
+            景区导航
+            <span class="nav-btn">离线下载</span>
+        </div>
+        <div class="map-box">
+            景区高精度手绘地图
+            <div class="map-location">📍</div>
+        </div>
+        <div class="map-offline">
+            📶 已切换至离线导航模式，定位/导航功能正常使用
+        </div>
+        <div class="map-func">
+            <div class="map-func-item">🚻 卫生间</div>
+            <div class="map-func-item">🍜 餐厅</div>
+            <div class="map-func-item">⚕️ 医疗点</div>
+            <div class="map-func-item">🅿️ 停车场</div>
+        </div>
+        <div class="section-title">周边景点</div>
+        <div class="card">
+            <div class="card-title">铜车马展厅</div>
+            <div class="card-desc">距离当前位置200米 | 步行3分钟 | 开放中</div>
+            <div class="btn btn-secondary" style="margin:8px 0 0;padding:6px">导航前往</div>
+        </div>
+        <div class="card">
+            <div class="card-title">兵马俑三号坑</div>
+            <div class="card-desc">距离当前位置500米 | 步行7分钟 | 开放中</div>
+            <div class="btn btn-secondary" style="margin:8px 0 0;padding:6px">导航前往</div>
+        </div>
+    </div>
+
+    <!-- 紧急求助 -->
+    <div class="page no-tab" id="help">
+        <div class="help-header">
+            <div class="help-title">紧急求助</div>
+            <div class="help-location">当前定位：秦始皇兵马俑博物馆-一号坑<br>求助时间：2026-0X-0X 10:25</div>
+        </div>
+        <div class="help-form-item">
+            <label class="form-label">求助类型 <span style="color:#F44336">*</span></label>
+            <div class="help-type">
+                <div class="help-type-item active">医疗救助</div>
+                <div class="help-type-item">安全求助</div>
+                <div class="help-type-item">设施故障</div>
+                <div class="help-type-item">其他问题</div>
+            </div>
+        </div>
+        <div class="help-form-item">
+            <label class="form-label">求助描述（选填）</label>
+            <input type="text" class="form-input" placeholder="请简要描述你的问题，如：身体不适需要帮助">
+        </div>
+        <div class="btn btn-danger" style="background:#F44336">立即发送求助信息至景区救援中心</div>
+        <div class="section-title">附近救援点</div>
+        <div class="card">
+            <div class="card-title">兵马俑景区医疗点</div>
+            <div class="card-desc">距离300米 | 步行5分钟 | 电话：029-XXXXXXX</div>
+        </div>
+        <div class="card">
+            <div class="card-title">兵马俑景区警务点</div>
+            <div class="card-desc">距离500米 | 步行8分钟 | 电话：029-XXXXXXX</div>
+        </div>
+    </div>
+
+    <!-- 找向导 -->
+    <div class="page no-tab" id="guide">
+        <div class="nav">
+            <span class="back-btn" onclick="back()">←</span>
+            本地向导
+            <span class="nav-btn">筛选</span>
+        </div>
+        <div class="search">
+            <input type="text" placeholder="搜索向导服务类型，如：讲解/拍照">
+        </div>
+        <div class="section-title">周边认证向导（距离由近至远）</div>
+        <div class="guide-item">
+            <div class="guide-avatar">张导</div>
+            <div class="guide-info">
+                <div class="guide-name">张向导</div>
+                <div class="guide-tag">
+                    <span class="tag">兵马俑讲解</span>
+                    <span class="tag">非遗介绍</span>
+                </div>
+                <div class="guide-score">⭐4.9 (128条评价) | 距离500米</div>
+                <div class="card-desc">服务价格：50元/小时 | 从业5年</div>
+            </div>
+            <div class="guide-call" onclick="go('guideOrder')">立即呼叫</div>
+        </div>
+        <div class="guide-item">
+            <div class="guide-avatar">李导</div>
+            <div class="guide-info">
+                <div class="guide-name">李向导</div>
+                <div class="guide-tag">
+                    <span class="tag">景区带路</span>
+                    <span class="tag">旅拍</span>
+                </div>
+                <div class="guide-score">⭐4.8 (96条评价) | 距离800米</div>
+                <div class="card-desc">服务价格：40元/小时 | 从业3年</div>
+            </div>
+            <div class="guide-call" onclick="go('guideOrder')">立即呼叫</div>
+        </div>
+    </div>
+
+    <!-- 打卡任务 -->
+    <div class="page" id="checkin">
+        <div class="nav nav-center">打卡任务</div>
+        <div class="search">
+            <input type="text" placeholder="搜索打卡点/藏品类型">
+        </div>
+        <div class="section-title">西安非遗打卡点</div>
+        <div class="checkin-item" onclick="go('checkinSuccess')">
+            <div class="checkin-img">兵马俑</div>
+            <div class="checkin-info">
+                <div class="card-title">秦始皇兵马俑博物馆</div>
+                <div class="card-desc">西安市临潼区 | 打卡要求：到店扫码</div>
+                <div class="checkin-reward">🎁 打卡奖励：兵马俑基础数字藏品+20积分</div>
+            </div>
+            <div class="checkin-btn">扫码打卡</div>
+        </div>
+        <div class="checkin-item">
+            <div class="checkin-img">皮影</div>
+            <div class="checkin-info">
+                <div class="card-title">西安皮影非遗体验馆</div>
+                <div class="card-desc">西安市莲湖区 | 打卡要求：体验皮影制作</div>
+                <div class="checkin-reward">🎁 打卡奖励：皮影非遗数字藏品+30积分</div>
+            </div>
+            <div class="checkin-btn">扫码打卡</div>
+        </div>
+        <div class="section-title">打卡规则</div>
+        <div class="card">
+            <div class="card-desc">1. 每完成1个打卡点可领取对应基础数字藏品及积分；<br>2. 累计打卡3个同品类非遗点，解锁专属非遗数字藏品；<br>3. 每日每个打卡点限打卡1次，禁止重复打卡。</div>
+        </div>
+    </div>
+
+    <!-- 打卡成功 -->
+    <div class="page no-tab" id="checkinSuccess">
+        <div class="checkin-success">
+            <div class="checkin-success-icon">✅</div>
+            <div class="checkin-success-title">打卡成功！</div>
+            <div class="checkin-success-desc">你已完成「秦始皇兵马俑博物馆」打卡，成功领取基础数字藏品及20积分，藏品已存入你的数字藏品馆～</div>
+            <div class="btn btn-primary" onclick="go('nft')">前往藏品馆查看</div>
+            <div class="btn btn-secondary" onclick="back()">返回继续打卡</div>
+        </div>
+    </div>
+
+    <!-- ====================== 新增：打卡详情页 ====================== -->
+    <div class="page no-tab" id="checkinDetail">
+        <div class="nav">
+            <span class="back-btn" onclick="back()">←</span>
+            打卡详情
+            <span class="nav-btn" onclick="go('map')">导航前往</span>
+        </div>
+        <div class="checkin-detail-banner">
+            秦始皇兵马俑博物馆 - 打卡点实景图
+        </div>
+        <div class="checkin-detail-info">
+            <div class="checkin-detail-title">秦始皇兵马俑博物馆</div>
+            <div class="checkin-detail-location">📍 西安市临潼区秦陵北路</div>
+            <div class="tag tag-orange">国家级非遗</div>
+            <div class="tag">世界文化遗产</div>
+            
+            <div class="checkin-detail-reward">
+                <div class="card-title" style="font-size:16px">🎁 打卡奖励</div>
+                <div class="card-desc" style="margin-top:6px">
+                    1. 兵马俑基础数字藏品 ×1<br>
+                    2. 随行文旅积分 +20<br>
+                    3. 非遗打卡认证勋章
+                </div>
+            </div>
+        </div>
+
+        <div class="checkin-detail-rule">
+            <div class="section-title" style="margin:0 0 12px 0">打卡规则</div>
+            <div class="card-desc">
+                1. 需到达打卡点现场，使用小程序扫码完成打卡；<br>
+                2. 每个用户每日同一打卡点仅可打卡1次；<br>
+                3. 打卡成功后，藏品与积分实时到账；<br>
+                4. 累计打卡3个非遗点，可解锁稀有非遗数字藏品。
+            </div>
+        </div>
+
+        <div class="section-title">景点介绍</div>
+        <div class="card">
+            <div class="card-desc">
+                秦始皇兵马俑博物馆是世界文化遗产、全国重点文物保护单位，被誉为“世界第八大奇迹”。
+                兵马俑规模宏大，造型逼真，生动再现了秦朝军队的威武气势，是中国古代辉煌文明的金字名片。
+            </div>
+        </div>
+
+        <div class="btn btn-warning" style="background:#FF9800" onclick="go('checkinSuccess')">
+            立即扫码打卡
+        </div>
+    </div>
+
+    <!-- ====================== 新增：问答详情页 ====================== -->
+    <div class="page no-tab" id="qaDetail">
+        <div class="nav">
+            <span class="back-btn" onclick="back()">←</span>
+            问答详情
+        </div>
+
+        <div class="qa-detail-question">
+            <div class="qa-item-header">
+                <span class="qa-item-user">游客 | 2小时前 · 西安</span>
+            </div>
+            <div class="qa-item-title" style="font-size:17px">西安兵马俑需要提前预约吗？现场能买票吗？</div>
+        </div>
+
+        <div class="section-title">达人解答</div>
+        <div class="qa-detail-answer-box">
+            <div class="qa-item-answerer" style="font-size:14px">
+                本地达人「西安老陕」⭐4.9 金牌解答
+            </div>
+            <div style="font-size:15px;line-height:1.7;margin-top:8px">
+                兵马俑景区**必须提前预约**，现场**没有线下售票窗口**！<br><br>
+                预约方式：关注「秦始皇兵马俑博物馆」官方公众号，提前1-3天预约门票。
+                节假日、周末一定要尽早预约，否则很容易没票。<br><br>
+                门票价格：成人120元，学生半价，65岁以上老人免票。
+            </div>
+        </div>
+
+        <div class="section-title">游客补充追问</div>
+        <div class="qa-detail-comment">
+            <div style="font-size:12px;color:#78909c;margin-bottom:6px">游客追问：</div>
+            <div style="font-size:14px">请问从西安市区怎么去最方便？大概需要多久？</div>
+        </div>
+        <div class="qa-detail-comment" style="background:#e8f5e9">
+            <div style="font-size:12px;color:#4CAF50;margin-bottom:6px">达人回复：</div>
+            <div style="font-size:14px">
+                地铁9号线直达「华清池站」，出站后打车10分钟就到景区大门，全程约1小时，非常方便！
+            </div>
+        </div>
+
+        <div class="btn btn-primary">我也要追问</div>
+        <div class="btn btn-secondary">点赞 · 收藏 · 分享</div>
+    </div>
+
+    <!-- 文旅记忆册 -->
+    <div class="page no-tab" id="memory">
+        <div class="nav">
+            <span class="back-btn" onclick="back()">←</span>
+            文旅记忆册
+            <span class="nav-btn">保存</span>
+        </div>
+        <div class="memory-header">
+            <div class="memory-title">西安3日非遗文化游记忆册</div>
+            <div class="memory-desc">旅行时间：2026-0X-0X 至 2026-0X-0X | 打卡3个点位 | 解锁2件藏品</div>
+        </div>
+        <div class="memory-style">
+            <div class="memory-style-item active">文艺风</div>
+            <div class="memory-style-item">攻略风</div>
+            <div class="memory-style-item">情感风</div>
+        </div>
+        <div class="btn btn-primary" style="width:calc(100% - 32px)">生成AI图文游记（含短视频）</div>
+        <div class="memory-preview">
+            <div class="memory-preview-img">游记封面图（AI生成）</div>
+            <div class="card-title">西安，一场穿越千年的非遗之旅</div>
+            <div class="card-desc" style="margin-top:8px;line-height:1.6">
+                兵马俑的恢弘，古城墙的厚重，皮影的灵动，构成了西安独有的非遗画卷...<br>
+                3天的行程，从秦皇扫六合的霸气，到市井巷陌的烟火，每一步都是历史的回响...
+            </div>
+        </div>
+        <div class="btn btn-warning" style="background:#FF9800">一键分享至朋友圈/小红书</div>
+    </div>
+
+    <!-- 数字藏品馆 -->
+    <div class="page" id="nft">
+        <div class="nav nav-center">数字藏品馆</div>
+        <div class="nft-header">
+            <div class="nft-title">我的非遗数字藏品</div>
+            <div class="nft-count">已收藏：8件 | 非遗品类：3类 | 解锁特权：Lv2</div>
+        </div>
+        <div class="nft-tab">
+            <div class="nft-tab-item active">全部藏品</div>
+            <div class="nft-tab-item">基础藏品</div>
+            <div class="nft-tab-item">非遗藏品</div>
+        </div>
+        <div class="nft-item">
+            <div class="nft-img">兵马俑</div>
+            <div class="nft-name">兵马俑基础数字藏品</div>
+            <div class="nft-tag">打卡解锁 | 2026-0X-0X</div>
+        </div>
+        <div class="nft-item">
+            <div class="nft-img">皮影</div>
+            <div class="nft-name">皮影非遗数字藏品</div>
+            <div class="nft-tag">非遗打卡解锁 | 2026-0X-0X | 稀有</div>
+        </div>
+        <div class="section-title">藏品特权</div>
+        <div class="card">
+            <div class="card-title">Lv2 藏品特权（集齐5件非遗藏品解锁）</div>
+            <div class="card-desc" style="margin-top:8px">1. 非遗传承人线上交流资格；<br>2. 专属非遗行程定制；<br>3. 打卡积分翻倍。</div>
+        </div>
+    </div>
+
+    <!-- 个人中心 -->
+    <div class="page" id="user">
+        <div class="nav nav-center">我的</div>
+        <div class="user-header">
+            <div class="user-avatar">用</div>
+            <div class="user-name">随行文旅用户</div>
+            <div class="user-level">文旅体验官 Lv3</div>
+            <div class="user-data">
+                <div class="user-data-item">
+                    <div class="user-data-num">8</div>
+                    <div class="user-data-text">藏品</div>
+                </div>
+                <div class="user-data-item">
+                    <div class="user-data-num">520</div>
+                    <div class="user-data-text">积分</div>
+                </div>
+                <div class="user-data-item">
+                    <div class="user-data-num">12</div>
+                    <div class="user-data-text">行程</div>
+                </div>
+                <div class="user-data-item">
+                    <div class="user-data-num">6</div>
+                    <div class="user-data-text">打卡</div>
+                </div>
+            </div>
+        </div>
+        <div class="user-assets">
+            <div class="user-assets-item">
+                <div class="user-assets-icon">⚡</div>
+                <div class="user-assets-num">520</div>
+                <div class="user-assets-text">积分</div>
+            </div>
+            <div class="user-assets-item">
+                <div class="user-assets-icon">🎁</div>
+                <div class="user-assets-num">8</div>
+                <div class="user-assets-text">藏品</div>
+            </div>
+            <div class="user-assets-item">
+                <div class="user-assets-icon">📅</div>
+                <div class="user-assets-num">3</div>
+                <div class="user-assets-text">待出行</div>
+            </div>
+        </div>
+        <div class="user-menu">
+            <div class="user-menu-item" onclick="go('tripList')">我的行程</div>
+            <div class="user-menu-item" onclick="go('nft')">数字藏品馆</div>
+            <div class="user-menu-item" onclick="go('memory')">文旅记忆册</div>
+            <div class="user-menu-item" onclick="go('integral')">积分中心</div>
+            <div class="user-menu-item" onclick="go('order')">我的订单</div>
+            <div class="user-menu-item" onclick="go('service')">我的问答</div>
+            <div class="user-menu-item" onclick="go('setting')">设置</div>
+            <div class="user-menu-item" style="color:#F44336" onclick="go('login')">退出登录</div>
+        </div>
+    </div>
+
+    <!-- 达人工作台 -->
+    <div class="page no-tab" id="daren">
+        <div class="daren-header">
+            <div class="daren-name">本地达人 · 西安老陕</div>
+            <div class="daren-data">
+                <span>待审核行程：3</span>
+                <span>待解答问题：5</span>
+                <span>本月收益：¥1280</span>
+            </div>
+        </div>
+        <div class="daren-task">
+            <div class="daren-task-item" onclick="go('darenAuditTrip')">
+                📝
+                <div class="daren-task-num">3</div>
+                <div class="daren-task-text">待审核行程</div>
+            </div>
+            <div class="daren-task-item" onclick="go('darenAnswer')">
+                💬
+                <div class="daren-task-num">5</div>
+                <div class="daren-task-text">待解答问题</div>
+            </div>
+            <div class="daren-task-item" onclick="go('darenPublish')">
+                ✍️
+                <div class="daren-task-num">发布</div>
+                <div class="daren-task-text">严选行程</div>
+            </div>
+        </div>
+        <div class="section-title">我的服务数据</div>
+        <div class="card">
+            <div class="card-title">本月数据概览</div>
+            <div class="card-desc" style="margin-top:8px;line-height:1.6">
+                行程审核：28单 | 问题解答：65条 | 向导服务：12单<br>
+                行程选用率：85% | 回答采纳率：92% | 服务评分：4.9
+            </div>
+        </div>
+        <div class="btn btn-primary" onclick="go('darenProfit')">查看收益明细/提现</div>
+        <div class="btn btn-secondary" onclick="go('login')">退出达人登录</div>
+    </div>
+
+    <!-- 管理员后台 -->
+    <div class="page no-tab" id="admin">
+        <div class="admin">
+            <div class="admin-title">随行文旅 - 管理员后台</div>
+            <div class="admin-menu-item">📝 内容审核（行程/问答/评价）</div>
+            <div class="admin-menu-item">👤 用户/达人管理</div>
+            <div class="admin-menu-item">⚙️ 系统规则配置（积分/会员/藏品）</div>
+            <div class="admin-menu-item">📊 数据监控/统计报表</div>
+            <div class="admin-menu-item">📱 小程序运营配置</div>
+            <div class="admin-menu-item" style="color:#F44336" onclick="go('login')">退出管理员登录</div>
+        </div>
+    </div>
+
+    <!-- 底部Tabbar -->
+    <div class="tab">
+        <div class="tab-item active" onclick="go('home')">🏠 发现</div>
+        <div class="tab-item" onclick="go('tripList')">📅 行程</div>
+        <div class="tab-item" onclick="go('service')">💬 服务</div>
+        <div class="tab-item" onclick="go('user')">👤 我的</div>
+    </div>
+</div>
+
+<script>
+    // ========== 优化核心：路由历史栈 + 跳转/返回逻辑 ==========
+    const routeStack = []; // 页面历史栈
+    let isNavigating = false; // 防止重复点击
+
+    // 1. 页面跳转函数（优化版）
+    function go(pageId) {
+        if (isNavigating) return;
+        isNavigating = true;
+
+        const currentPage = document.querySelector('.page.active');
+        const targetPage = document.getElementById(pageId);
+        
+        if (!targetPage) {
+            isNavigating = false;
+            return;
+        }
+
+        // 记录历史栈（不重复记录同一页面、根页面不重复入栈）
+        const lastPage = routeStack[routeStack.length - 1];
+        if (lastPage !== pageId && !['home', 'tripList', 'service', 'user'].includes(lastPage)) {
+            routeStack.push(currentPage.id);
+        }
+
+        // 隐藏所有页面
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        // 显示目标页面
+        targetPage.classList.add('active');
+        // 滚动到顶部
+        targetPage.scrollTop = 0;
+
+        // 更新Tabbar选中状态
+        updateTabStatus(pageId);
+
+        // 解锁点击
+        setTimeout(() => {
+            isNavigating = false;
+        }, 250);
+    }
+
+    // 2. 返回上一页函数（核心优化）
+    function back() {
+        if (isNavigating || routeStack.length === 0) {
+            // 无历史记录时返回首页
+            go('home');
+            return;
+        }
+        isNavigating = true;
+
+        // 出栈，返回上一页
+        const prevPage = routeStack.pop();
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(prevPage).classList.add('active');
+        updateTabStatus(prevPage);
+
+        setTimeout(() => {
+            isNavigating = false;
+        }, 250);
+    }
+
+    // 3. 更新Tabbar选中状态
+    function updateTabStatus(pageId) {
+        const tabMap = {
+            'home': 0,
+            'tripList': 1,
+            'tripDetail':1,
+            'checkin':1,
+            'service': 2,
+            'user': 3,
+            'nft':3
+        };
+        // 重置所有Tab
+        document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
+        // 激活对应Tab
+        if (tabMap[pageId] !== undefined) {
+            document.querySelectorAll('.tab-item')[tabMap[pageId]].classList.add('active');
+        }
+    }
+
+    // 初始化：给所有back-btn绑定返回事件
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.back-btn').forEach(btn => {
+            btn.setAttribute('onclick', 'back()');
+        });
+    });
+</script>
+</body>
+</html>

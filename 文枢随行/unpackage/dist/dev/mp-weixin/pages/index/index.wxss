@@ -1,0 +1,357 @@
+
+/* 页面基础样式 */
+.page.data-v-1cf27b2a {
+  min-height: 100vh;
+  background-color: #F8FAF9;
+}
+
+/* 顶部搜索区域 */
+.header.data-v-1cf27b2a {
+  padding: 12px 20px;
+  background-color: #E8F5E9;
+}
+.search-box.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  padding: 12px 16px;
+  border: 1px solid #E8EDE9;
+}
+.search-icon.data-v-1cf27b2a {
+  font-size: 18px;
+  color: #5FB878;
+  margin-right: 10px;
+}
+.search-input.data-v-1cf27b2a {
+  flex: 1;
+  font-size: 14px;
+  color: #2C3E50;
+}
+
+/* AI智能定制 Banner */
+.ai-banner.data-v-1cf27b2a {
+  margin: 0 20px 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #C8E6C9;
+}
+.ai-banner-bg.data-v-1cf27b2a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #5FB878 0%, #4A9B61 50%, #3D8B53 100%);
+}
+.mountain-pattern.data-v-1cf27b2a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, #FFFFFF 100%);
+}
+.ai-banner-content.data-v-1cf27b2a {
+  position: relative;
+  padding: 24px 20px;
+}
+.ai-banner-title.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #FFFFFF;
+}
+.ai-icon.data-v-1cf27b2a {
+  font-size: 24px;
+  margin-right: 8px;
+}
+.ai-banner-desc.data-v-1cf27b2a {
+  font-size: 13px;
+  color: #FFFFFF;
+  margin-bottom: 16px;
+}
+.ai-banner-btn.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #FFFFFF;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5FB878;
+}
+.ai-banner-btn .arrow.data-v-1cf27b2a {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+/* 功能入口网格 */
+.func-grid.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 0 20px 24px;
+}
+.func-item.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid #E8EDE9;
+  flex: 1;
+  margin: 0 6px;
+}
+.func-icon.data-v-1cf27b2a {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+.func-icon-service.data-v-1cf27b2a {
+  background: linear-gradient(135deg, #5FB878 0%, #7EC8A6 100%);
+}
+.func-icon-checkin.data-v-1cf27b2a {
+  background: linear-gradient(135deg, #FF9A56 0%, #FFB347 100%);
+}
+.func-icon-daren.data-v-1cf27b2a {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.func-icon-nav.data-v-1cf27b2a {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+.func-name.data-v-1cf27b2a {
+  font-size: 12px;
+  color: #2C3E50;
+  font-weight: 500;
+}
+
+/* 区块样式 */
+.section.data-v-1cf27b2a {
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+.section-header.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.section-title.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #2C3E50;
+}
+.title-icon.data-v-1cf27b2a {
+  font-size: 18px;
+  color: #5FB878;
+  margin-right: 8px;
+}
+.section-more.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 13px;
+  color: #5FB878;
+  font-weight: 500;
+}
+.section-more .arrow.data-v-1cf27b2a {
+  font-size: 11px;
+  margin-left: 2px;
+}
+
+/* 行程卡片 */
+.card-list.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: column;
+}
+.trip-card.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #E8EDE9;
+  margin-bottom: 12px;
+}
+.trip-card-image.data-v-1cf27b2a {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+.image-placeholder.data-v-1cf27b2a {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.landscape-icon.data-v-1cf27b2a {
+  font-size: 40px;
+}
+.trip-card-tag.data-v-1cf27b2a {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: #5FB878;
+  color: #FFFFFF;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.trip-card-tag.tag-food.data-v-1cf27b2a {
+  background-color: #FF9A56;
+}
+.trip-card-content.data-v-1cf27b2a {
+  flex: 1;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.trip-card-title.data-v-1cf27b2a {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2C3E50;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.trip-card-desc.data-v-1cf27b2a {
+  font-size: 12px;
+  color: #5D6D7E;
+  line-height: 1.5;
+}
+.trip-card-footer.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.trip-card-price.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+.price-unit.data-v-1cf27b2a {
+  font-size: 12px;
+  color: #E74C3C;
+  font-weight: 600;
+}
+.price-num.data-v-1cf27b2a {
+  font-size: 20px;
+  color: #E74C3C;
+  font-weight: 700;
+  margin: 0 2px;
+}
+.price-text.data-v-1cf27b2a {
+  font-size: 11px;
+  color: #95A5A6;
+}
+.trip-card-badge.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #E8F5E9;
+  color: #5FB878;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.badge-icon.data-v-1cf27b2a {
+  font-size: 12px;
+  margin-right: 3px;
+}
+
+/* 打卡点卡片 */
+.spot-card.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #E8EDE9;
+}
+.spot-card-image.data-v-1cf27b2a {
+  width: 100px;
+  height: 100px;
+}
+.spot-card-content.data-v-1cf27b2a {
+  flex: 1;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.spot-card-title.data-v-1cf27b2a {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2C3E50;
+  margin-bottom: 6px;
+}
+.spot-card-desc.data-v-1cf27b2a {
+  font-size: 12px;
+  color: #5FB878;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.spot-card-location.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 11px;
+  color: #95A5A6;
+  margin-bottom: 10px;
+}
+.location-icon.data-v-1cf27b2a {
+  font-size: 12px;
+  margin-right: 4px;
+}
+.spot-card-tags.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+}
+.spot-tag.data-v-1cf27b2a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #E8F5E9;
+  color: #5FB878;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  margin-right: 8px;
+}
+.spot-tag.tag-heritage.data-v-1cf27b2a {
+  background-color: #FFF3E0;
+  color: #FF9A56;
+}
+.tag-icon.data-v-1cf27b2a {
+  font-size: 11px;
+  margin-right: 3px;
+}
+
+/* 底部留白 */
+.bottom-space.data-v-1cf27b2a {
+  height: 30px;
+}

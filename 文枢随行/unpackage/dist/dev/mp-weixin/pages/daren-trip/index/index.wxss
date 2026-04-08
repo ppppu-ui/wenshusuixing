@@ -1,0 +1,210 @@
+
+.page.data-v-b4e2b2af {
+  width: 100%;
+  min-height: 100vh;
+  background: #F8F9FA;
+  padding-bottom: 32px;
+}
+.nav.data-v-b4e2b2af {
+  height: 48px;
+  background: linear-gradient(90deg, #4CAF50, #66BB6A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: none;
+}
+.back-btn.data-v-b4e2b2af {
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: absolute;
+  left: 16px;
+  top: 8px;
+}
+.back-btn.data-v-b4e2b2af:active {
+  opacity: 0.7;
+  background: rgba(255,255,255,0.15);
+}
+.daren-trip-header.data-v-b4e2b2af {
+  background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+  padding: 24px 16px;
+  text-align: center;
+  border-radius: 0 0 24px 24px;
+  margin-bottom: 24px;
+}
+.daren-trip-header-title.data-v-b4e2b2af {
+  font-size: 20px;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 8px;
+}
+.daren-trip-header-subtitle.data-v-b4e2b2af {
+  font-size: 14px;
+  color: #495057;
+}
+.daren-trip-filter.data-v-b4e2b2af {
+  display: flex;
+  gap: 16px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.daren-trip-filter.data-v-b4e2b2af::-webkit-scrollbar {
+  display: none;
+}
+.daren-trip-filter-item.data-v-b4e2b2af {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6C757D;
+  background: #fff;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.daren-trip-filter-item.active.data-v-b4e2b2af {
+  background: linear-gradient(90deg, #4CAF50, #66BB6A);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(76,175,80,0.2);
+}
+.daren-trip-filter-item.data-v-b4e2b2af:active {
+  transform: scale(0.95);
+}
+.daren-trip-list.data-v-b4e2b2af {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.daren-trip-item.data-v-b4e2b2af {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.daren-trip-item.data-v-b4e2b2af:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+.daren-trip-item-image.data-v-b4e2b2af {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+.daren-trip-item-image img.data-v-b4e2b2af {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.daren-trip-item:active .daren-trip-item-image img.data-v-b4e2b2af {
+  transform: scale(1.05);
+}
+.daren-trip-item-tag.data-v-b4e2b2af {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(90deg, #FF5722, #FF9800);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.daren-trip-item-content.data-v-b4e2b2af {
+  padding: 16px;
+}
+.daren-trip-item-title.data-v-b4e2b2af {
+  font-size: 18px;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.daren-trip-item-meta.data-v-b4e2b2af {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #6C757D;
+  font-weight: 500;
+}
+.daren-trip-item-meta span.data-v-b4e2b2af:nth-child(2) {
+  color: #FF5722;
+  font-weight: 600;
+}
+.daren-trip-item-meta span.data-v-b4e2b2af:nth-child(3) {
+  color: #4CAF50;
+  font-weight: 600;
+}
+.daren-trip-item-desc.data-v-b4e2b2af {
+  font-size: 14px;
+  color: #495057;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.daren-trip-item-daren.data-v-b4e2b2af {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #F1F3F5;
+}
+.daren-trip-item-daren-avatar.data-v-b4e2b2af {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #E8F5E9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.daren-trip-item-daren-avatar img.data-v-b4e2b2af {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.daren-trip-item-daren-info.data-v-b4e2b2af {
+  flex: 1;
+}
+.daren-trip-item-daren-name.data-v-b4e2b2af {
+  font-size: 14px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 4px;
+}
+.daren-trip-item-daren-badge.data-v-b4e2b2af {
+  font-size: 12px;
+  padding: 2px 8px;
+  background: #E3F2FD;
+  color: #1976D2;
+  border-radius: 12px;
+  font-weight: 500;
+  display: inline-block;
+}

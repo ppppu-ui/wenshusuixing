@@ -1,0 +1,1 @@
+<view class="login data-v-74536dfd"><view class="login-logo data-v-74536dfd">随行文旅</view><view class="login-desc data-v-74536dfd">智慧旅行 · 覆盖旅行前/中/后全流程</view><view class="btn btn-primary data-v-74536dfd" bindtap="{{a}}">微信一键授权登录</view><view class="login-daren data-v-74536dfd" bindtap="{{b}}">本地达人/管理员请点击此处登录</view></view>

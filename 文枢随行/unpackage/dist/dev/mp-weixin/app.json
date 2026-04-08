@@ -1,0 +1,51 @@
+{
+  "pages": [
+    "pages/login/index/index",
+    "pages/index/index",
+    "pages/ai-trip/index/index",
+    "pages/ai-trip/result/index",
+    "pages/trip/index/index",
+    "pages/trip/detail/index",
+    "pages/navigation/index/index",
+    "pages/service/index/index",
+    "pages/my/index/index",
+    "pages/checkin/index/index",
+    "pages/checkin/detail/index",
+    "pages/daren-trip/index/index",
+    "pages/service/qa-ask/index/index",
+    "pages/service/emergency/index/index",
+    "pages/service/guide/index/index",
+    "pages/service/qa-detail/index/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "随行文旅",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#95A5A6",
+    "selectedColor": "#5FB878",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "发现"
+      },
+      {
+        "pagePath": "pages/trip/index/index",
+        "text": "行程"
+      },
+      {
+        "pagePath": "pages/service/index/index",
+        "text": "服务"
+      },
+      {
+        "pagePath": "pages/my/index/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

@@ -1,0 +1,262 @@
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.page.data-v-f6ccea2d {
+  width: 100%;
+  height: calc(100% - 56rpx);
+  overflow-y: auto;
+  padding-bottom: 20rpx;
+  background: #F8F9FA;
+}
+.nav.data-v-f6ccea2d {
+  height: 48rpx;
+  background: linear-gradient(90deg, #4CAF50, #66BB6A);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16rpx;
+  font-size: 18rpx;
+  font-weight: 700;
+  color: #fff;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  border: none;
+}
+.nav-center.data-v-f6ccea2d {
+  justify-content: center;
+}
+.search.data-v-f6ccea2d {
+  margin: 12rpx 16rpx;
+  height: 44rpx;
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 18rpx;
+  border: 1rpx solid #E9ECEF;
+  transition: all 0.2s;
+}
+.search.data-v-f6ccea2d:focus-within {
+  border-color: #4CAF50;
+  background: #fff;
+  box-shadow: 0 0 0 3rpx rgba(76, 175, 80, 0.1);
+}
+.search.data-v-f6ccea2d::before {
+  content: "🔍";
+  margin-right: 10rpx;
+  color: #ADB5BD;
+  font-size: 16rpx;
+}
+.search input.data-v-f6ccea2d {
+  border: none;
+  background: none;
+  outline: none;
+  width: 100%;
+  font-size: 15rpx;
+  color: #495057;
+}
+.search input.data-v-f6ccea2d::-webkit-input-placeholder {
+  color: #ADB5BD;
+  -webkit-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+}
+.search input.data-v-f6ccea2d::placeholder {
+  color: #ADB5BD;
+  transition: opacity 0.2s;
+}
+.search input.data-v-f6ccea2d:focus::-webkit-input-placeholder {
+  opacity: 0.5;
+}
+.search input.data-v-f6ccea2d:focus::placeholder {
+  opacity: 0.5;
+}
+.service-urgent.data-v-f6ccea2d {
+  display: flex;
+  margin: 16rpx;
+  gap: 12rpx;
+}
+.service-urgent-item.data-v-f6ccea2d {
+  flex: 1;
+  padding: 22rpx 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  transition: all 0.25s;
+  border: 1rpx solid #E9ECEF;
+}
+.service-urgent-item.data-v-f6ccea2d:active {
+  transform: scale(0.97);
+}
+.service-urgent-icon.data-v-f6ccea2d {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+  color: #fff;
+}
+.service-urgent-icon-sos.data-v-f6ccea2d {
+  background: linear-gradient(180deg, #E53935, #D32F2F);
+}
+.service-urgent-icon-guide.data-v-f6ccea2d {
+  background: linear-gradient(180deg, #FFB74D, #FF9800);
+}
+.service-urgent-text.data-v-f6ccea2d {
+  flex: 1;
+}
+.service-urgent-title.data-v-f6ccea2d {
+  font-size: 16rpx;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 6rpx;
+}
+.service-urgent-desc.data-v-f6ccea2d {
+  font-size: 12rpx;
+  color: #495057;
+}
+.qa-ask-box.data-v-f6ccea2d {
+  margin: 16rpx;
+  height: 52rpx;
+  background: #fff;
+  border-radius: 26rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 1rpx solid #E9ECEF;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03);
+}
+.qa-ask-box.data-v-f6ccea2d:active {
+  background: #F8F9FA;
+  transform: scale(0.98);
+}
+.qa-ask-box.data-v-f6ccea2d::before {
+  content: "🙋";
+  margin-right: 12rpx;
+  font-size: 18rpx;
+  color: #36BFFA;
+}
+.qa-ask-text.data-v-f6ccea2d {
+  font-size: 15rpx;
+  color: #ADB5BD;
+}
+.section-title.data-v-f6ccea2d {
+  margin: 20rpx 16rpx 12rpx;
+  font-size: 17rpx;
+  font-weight: 700;
+  color: #212529;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding-left: 12rpx;
+}
+.section-title.data-v-f6ccea2d::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 4rpx;
+  height: 16rpx;
+  background: #4CAF50;
+  border-radius: 2rpx;
+}
+.qa-item.data-v-f6ccea2d {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 18rpx 16rpx;
+  margin: 0 16rpx 12rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 1rpx solid #E9ECEF;
+}
+.qa-item.data-v-f6ccea2d:active {
+  transform: translateY(-2rpx);
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+.qa-item-header.data-v-f6ccea2d {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.qa-item-user.data-v-f6ccea2d {
+  font-size: 12rpx;
+  color: #ADB5BD;
+}
+.qa-item-title.data-v-f6ccea2d {
+  font-size: 16rpx;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 10rpx;
+}
+.qa-item-answerer.data-v-f6ccea2d {
+  font-size: 13rpx;
+  color: #36BFFA;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+.qa-item-answerer.data-v-f6ccea2d::after {
+  content: "✅";
+  font-size: 10rpx;
+}
+.qa-item-answer.data-v-f6ccea2d {
+  font-size: 14rpx;
+  color: #495057;
+  background: #F5F7FA;
+  padding: 12rpx;
+  border-radius: 8rpx;
+  margin-top: 8rpx;
+  line-height: 1.6;
+  border-left: 3rpx solid #36BFFA;
+}
+.tag.data-v-f6ccea2d {
+  display: inline-block;
+  padding: 3rpx 9rpx;
+  background: #E8F5E9;
+  color: #2E7D32;
+  font-size: 11rpx;
+  border-radius: 12rpx;
+  margin-right: 6rpx;
+  margin-bottom: 6rpx;
+  font-weight: 500;
+}
+.tag-blue.data-v-f6ccea2d {
+  background: #E3F2FD;
+  color: #1976D2;
+}
