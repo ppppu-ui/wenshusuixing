@@ -1,0 +1,127 @@
+{
+	 "pages": [
+		 {
+			 "path": "pages/login/index/index",
+			 "style": {
+				 "navigationStyle": "custom"
+			 }
+		 },
+		 {
+			 "path": "pages/index/index",
+			 "style": {
+				 "navigationBarTitleText": "发现"
+			 }
+		 },
+		 {
+			 "path": "pages/ai-trip/index/index",
+			 "style": {
+				 "navigationStyle": "custom"
+			 }
+		 },
+		 {
+			 "path": "pages/ai-trip/result/index",
+			 "style": {
+				 "navigationStyle": "custom"
+			 }
+		 },
+		 {
+			 "path": "pages/trip/index/index",
+			 "style": {
+				 "navigationStyle": "custom"
+			 }
+		 },
+		 {
+			 "path": "pages/trip/detail/index",
+			 "style": {
+				 "navigationStyle": "custom"
+			 }
+		 },
+		 {
+			 "path": "pages/navigation/index/index",
+			 "style": {
+				 "navigationStyle": "custom"
+			 }
+		 },
+		 {
+			 "path": "pages/service/index/index",
+			 "style": {
+				 "navigationBarTitleText": "服务"
+			 }
+		 },
+		 {
+			 "path": "pages/checkin/index/index",
+			 "style": {
+				 "navigationBarTitleText": "打卡任务"
+			 }
+		 },
+		 {
+			 "path": "pages/checkin/detail/index",
+			 "style": {
+				 "navigationBarTitleText": "打卡详情"
+			 }
+		 },
+		 {
+			 "path": "pages/daren-trip/index/index",
+			 "style": {
+				 "navigationBarTitleText": "达人严选"
+			 }
+		 },
+		 {
+			 "path": "pages/service/qa-ask/index/index",
+			 "style": {
+				 "navigationBarTitleText": "提问"
+			 }
+		 },
+		 {
+			 "path": "pages/service/emergency/index/index",
+			 "style": {
+				 "navigationBarTitleText": "紧急求助"
+			 }
+		 },
+		 {
+			 "path": "pages/service/guide/index/index",
+			 "style": {
+				 "navigationBarTitleText": "本地向导"
+			 }
+		 },
+		 {
+			 "path": "pages/service/qa-detail/index/index",
+			 "style": {
+				 "navigationBarTitleText": "问答详情"
+			 }
+		 },
+		 {
+			 "path": "pages/my/index/index",
+			 "style": {
+				 "navigationBarTitleText": "我的"
+			 }
+		 }
+	 ],
+	 "globalStyle": {
+		 "navigationBarTextStyle": "black",
+		 "navigationBarTitleText": "随行文旅",
+		 "navigationBarBackgroundColor": "#F8F8F8",
+		 "backgroundColor": "#F8F8F8"
+	 },
+	 "tabBar": {
+		 "color": "#95A5A6",
+		 "selectedColor": "#5FB878",
+		 "backgroundColor": "#FFFFFF",
+		 "borderStyle": "white",
+		 "list": [
+			 {
+				 "pagePath": "pages/index/index",
+				 "text": "发现"
+			 },
+			 {
+				 "pagePath": "pages/trip/index/index",
+				 "text": "行程"
+			 },
+			 {
+				 "pagePath": "pages/service/index/index",
+				 "text": "服务"
+			 }
+		 ]
+	 },
+	 "uniIdRouter": {}
+}
