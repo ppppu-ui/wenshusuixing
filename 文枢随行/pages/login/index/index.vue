@@ -61,6 +61,7 @@
 
 <script>
 const BASE_URL = 'http://10.158.14.40:8080';
+const DEV_BYPASS_LOGIN = true;
 
 export default {
   data() {
@@ -105,8 +106,32 @@ export default {
       if (this.mode === 'register') {
         this.register();
       } else {
+        if (DEV_BYPASS_LOGIN) {
+          this.mockLogin();
+          return;
+        }
         this.login();
       }
+    },
+    mockLogin() {
+      this.loading = true;
+      const mockToken = `dev-token-${Date.now()}`;
+      uni.setStorageSync('token', mockToken);
+      uni.setStorageSync('userInfo', {
+        nickname: '开发测试用户',
+        phone: this.form.phone || '13800000000'
+      });
+      uni.showToast({
+        title: '开发模式：已跳过登录',
+        icon: 'none',
+        duration: 1000
+      });
+      setTimeout(() => {
+        uni.switchTab({
+          url: '/pages/index/index'
+        });
+        this.loading = false;
+      }, 800);
     },
     register() {
       this.loading = true;

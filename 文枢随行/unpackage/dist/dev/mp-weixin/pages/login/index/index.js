@@ -45,8 +45,31 @@ const _sfc_main = {
       if (this.mode === "register") {
         this.register();
       } else {
-        this.login();
+        {
+          this.mockLogin();
+          return;
+        }
       }
+    },
+    mockLogin() {
+      this.loading = true;
+      const mockToken = `dev-token-${Date.now()}`;
+      common_vendor.index.setStorageSync("token", mockToken);
+      common_vendor.index.setStorageSync("userInfo", {
+        nickname: "开发测试用户",
+        phone: this.form.phone || "13800000000"
+      });
+      common_vendor.index.showToast({
+        title: "开发模式：已跳过登录",
+        icon: "none",
+        duration: 1e3
+      });
+      setTimeout(() => {
+        common_vendor.index.switchTab({
+          url: "/pages/index/index"
+        });
+        this.loading = false;
+      }, 800);
     },
     register() {
       this.loading = true;
@@ -69,7 +92,7 @@ const _sfc_main = {
           common_vendor.index.showToast({ title: "注册失败，请重试", icon: "none" });
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/login/index/index.vue:132", "注册请求失败:", err);
+          common_vendor.index.__f__("error", "at pages/login/index/index.vue:157", "注册请求失败:", err);
           common_vendor.index.showToast({ title: `网络异常: ${err.errMsg}`, icon: "none" });
         },
         complete: () => {
@@ -112,7 +135,7 @@ const _sfc_main = {
           }, 900);
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/login/index/index.vue:182", "登录请求失败:", err);
+          common_vendor.index.__f__("error", "at pages/login/index/index.vue:207", "登录请求失败:", err);
           common_vendor.index.showToast({ title: `网络异常: ${err.errMsg}`, icon: "none" });
         },
         complete: () => {
