@@ -215,9 +215,11 @@ export default {
     }
   },
   onLoad(options) {
-    // 如果有传入的行程ID，加载对应行程数据
-    if (options.id) {
-      this.loadTripData(options.id);
+    // 统一详情页数据来源：my(我的行程) / daren(达人行程)
+    const id = options.id;
+    const source = options.source || 'my';
+    if (id) {
+      this.loadTripData(id, source);
     }
   },
   onPageScroll(e) {
@@ -227,11 +229,107 @@ export default {
     formatNumber(num) {
       return num.toLocaleString();
     },
-    loadTripData(id) {
-      const savedTrips = uni.getStorageSync('myTrips') || [];
-      const trip = savedTrips.find(t => t.id == id);
-      if (trip) {
-        this.tripData = { ...this.tripData, ...trip };
+    loadTripData(id, source = 'my') {
+      if (source === 'my') {
+        const savedTrips = uni.getStorageSync('myTrips') || [];
+        const trip = savedTrips.find(t => String(t.id) === String(id));
+        if (trip) {
+          this.tripData = { ...this.tripData, ...trip };
+        }
+        return;
+      }
+
+      const darenTripMap = {
+        'daren-xian-3d': {
+          title: '西安3日非遗文化深度游',
+          days: 3,
+          budgetPerPerson: 800,
+          totalBudget: 800,
+          daysList: [
+            {
+              route: '兵马俑 → 华清宫',
+              spots: [
+                { name: '秦始皇兵马俑博物馆', duration: '09:00-12:00', desc: '世界遗产，经典打卡', tags: ['世界遗产', '达人推荐'] },
+                { name: '华清宫', duration: '13:30-16:00', desc: '唐风文化体验', tags: ['历史文化'] }
+              ]
+            },
+            {
+              route: '古城墙 → 永兴坊',
+              spots: [
+                { name: '西安古城墙', duration: '09:30-11:30', desc: '骑行环城体验', tags: ['户外活动'] },
+                { name: '永兴坊', duration: '12:30-14:00', desc: '非遗美食街区', tags: ['美食'] }
+              ]
+            },
+            {
+              route: '陕西历史博物馆 → 大雁塔',
+              spots: [
+                { name: '陕西历史博物馆', duration: '09:00-11:30', desc: '了解十三朝文明', tags: ['博物馆'] },
+                { name: '大雁塔', duration: '15:00-17:00', desc: '地标夜景拍照', tags: ['文化地标'] }
+              ]
+            }
+          ]
+        },
+        'daren-chengdu-2d': {
+          title: '成都2日美食打卡',
+          days: 2,
+          budgetPerPerson: 600,
+          totalBudget: 600,
+          daysList: [
+            {
+              route: '宽窄巷子 → 人民公园',
+              spots: [
+                { name: '宽窄巷子', duration: '10:00-12:00', desc: '老成都街巷体验', tags: ['城市漫游'] },
+                { name: '人民公园', duration: '14:00-15:30', desc: '体验成都慢生活', tags: ['休闲'] }
+              ]
+            },
+            {
+              route: '锦里 → 火锅体验',
+              spots: [
+                { name: '锦里古街', duration: '10:00-12:00', desc: '川蜀文化与小吃', tags: ['文化'] },
+                { name: '本地火锅店', duration: '18:00-20:00', desc: '达人私藏火锅店', tags: ['美食推荐'] }
+              ]
+            }
+          ]
+        },
+        'daren-guilin-4d': {
+          title: '桂林4日山水甲天下',
+          days: 4,
+          budgetPerPerson: 1200,
+          totalBudget: 1200,
+          daysList: [
+            {
+              route: '象鼻山 → 两江四湖',
+              spots: [
+                { name: '象鼻山', duration: '09:00-11:00', desc: '桂林城市地标', tags: ['自然风光'] },
+                { name: '两江四湖夜游', duration: '19:00-20:30', desc: '夜景游船体验', tags: ['夜游'] }
+              ]
+            },
+            {
+              route: '漓江 → 阳朔西街',
+              spots: [
+                { name: '漓江竹筏', duration: '09:00-12:00', desc: '山水画廊精华段', tags: ['必体验'] },
+                { name: '阳朔西街', duration: '15:00-17:00', desc: '休闲慢逛', tags: ['打卡'] }
+              ]
+            },
+            {
+              route: '遇龙河 → 十里画廊',
+              spots: [
+                { name: '遇龙河漂流', duration: '09:30-11:30', desc: '田园山水风光', tags: ['自然体验'] },
+                { name: '十里画廊骑行', duration: '14:00-16:00', desc: '经典骑行路线', tags: ['户外'] }
+              ]
+            },
+            {
+              route: '龙脊梯田',
+              spots: [
+                { name: '龙脊梯田', duration: '09:00-14:00', desc: '少数民族村寨与梯田景观', tags: ['深度游'] }
+              ]
+            }
+          ]
+        }
+      };
+
+      if (darenTripMap[id]) {
+        this.tripData = { ...this.tripData, ...darenTripMap[id] };
       }
     },
     goBack() {
@@ -239,7 +337,7 @@ export default {
     },
     goToNavigation() {
       uni.navigateTo({
-        url: '/pages/navigation/navigation'
+        url: '/pages/navigation/index/index'
       });
     },
     toggleDay(dayIndex) {

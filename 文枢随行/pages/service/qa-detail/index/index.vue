@@ -117,9 +117,8 @@ export default {
       });
     },
     askQuestion() {
-      // 跳转到提问页面
       uni.navigateTo({
-        url: '/pages/service/qa-ask/qa-ask'
+        url: '/pages/service/qa-ask/index/index'
       });
     }
   }

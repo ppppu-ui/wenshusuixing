@@ -1,107 +1,105 @@
 <template>
   <view class="page">
-    <div class="user-info">
-      <div class="user-avatar">
-        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20portrait%20friendly%20smile&image_size=square" alt="用户头像" />
-      </div>
-      <div class="user-details">
-        <div class="user-name">旅行达人</div>
-        <div class="user-id">ID: 123456789</div>
-      </div>
-    </div>
-    <div class="user-stats">
-      <div class="stat-item">
-        <div class="stat-value">12</div>
-        <div class="stat-label">定制行程</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">35</div>
-        <div class="stat-label">打卡天数</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">128</div>
-        <div class="stat-label">获赞数</div>
-      </div>
-    </div>
-    <div class="menu-section">
-      <div class="menu-item" @click="goToMyTrips">
-        <span class="menu-icon">✈️</span>
-        <span class="menu-text">我的行程</span>
-        <span class="menu-arrow">→</span>
-      </div>
-      <div class="menu-item" @click="goToMyCheckins">
-        <span class="menu-icon">📅</span>
-        <span class="menu-text">我的打卡</span>
-        <span class="menu-arrow">→</span>
-      </div>
-      <div class="menu-item" @click="goToMyQAs">
-        <span class="menu-icon">💬</span>
-        <span class="menu-text">我的问答</span>
-        <span class="menu-arrow">→</span>
-      </div>
-      <div class="menu-item" @click="goToMyFavorites">
-        <span class="menu-icon">❤️</span>
-        <span class="menu-text">我的收藏</span>
-        <span class="menu-arrow">→</span>
-      </div>
-      <div class="menu-item" @click="goToSettings">
-        <span class="menu-icon">⚙️</span>
-        <span class="menu-text">设置</span>
-        <span class="menu-arrow">→</span>
-      </div>
-    </div>
-    <div class="logout-btn" @click="logout">退出登录</div>
+    <view class="user-info">
+      <view class="user-avatar">
+        <image
+          class="user-avatar-img"
+          src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20portrait%20friendly%20smile&image_size=square"
+          mode="aspectFill"
+        />
+      </view>
+      <view class="user-details">
+        <view class="user-name">旅行达人</view>
+        <view class="user-id">ID: 123456789</view>
+      </view>
+    </view>
+
+    <view class="user-stats">
+      <view class="stat-item">
+        <view class="stat-value">12</view>
+        <view class="stat-label">定制行程</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-value">35</view>
+        <view class="stat-label">打卡天数</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-value">128</view>
+        <view class="stat-label">获赞数</view>
+      </view>
+    </view>
+
+    <view class="menu-section">
+      <view class="menu-item" @click="goToMyTrips">
+        <text class="menu-icon">✈️</text>
+        <text class="menu-text">我的行程</text>
+        <text class="menu-arrow">→</text>
+      </view>
+      <view class="menu-item" @click="goToMyCheckins">
+        <text class="menu-icon">📅</text>
+        <text class="menu-text">我的打卡</text>
+        <text class="menu-arrow">→</text>
+      </view>
+      <view class="menu-item" @click="goToMyQAs">
+        <text class="menu-icon">💬</text>
+        <text class="menu-text">我的问答</text>
+        <text class="menu-arrow">→</text>
+      </view>
+      <view class="menu-item" @click="goToMyFavorites">
+        <text class="menu-icon">❤️</text>
+        <text class="menu-text">我的收藏</text>
+        <text class="menu-arrow">→</text>
+      </view>
+      <view class="menu-item" @click="goToSettings">
+        <text class="menu-icon">⚙️</text>
+        <text class="menu-text">设置</text>
+        <text class="menu-arrow">→</text>
+      </view>
+    </view>
+
+    <view class="logout-btn" @click="logout">退出登录</view>
   </view>
 </template>
 
 <script>
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     goToMyTrips() {
-      // 跳转到我的行程页面（tabBar页面使用switchTab）
       uni.switchTab({
         url: '/pages/trip/index/index'
       });
     },
     goToMyCheckins() {
-      // 跳转到我的打卡页面
       uni.navigateTo({
         url: '/pages/checkin/index/index'
       });
     },
     goToMyQAs() {
-      // 跳转到我的问答页面（使用服务页面的问答列表）
       uni.switchTab({
         url: '/pages/service/index/index'
       });
     },
     goToMyFavorites() {
-      // 跳转到我的收藏页面（暂时使用达人严选页面作为收藏展示）
       uni.navigateTo({
         url: '/pages/daren-trip/index/index'
       });
     },
     goToSettings() {
-      // 跳转到设置页面（使用个人中心页面作为设置）
       uni.showToast({
         title: '设置功能开发中',
         icon: 'none'
       });
     },
     logout() {
-      // 退出登录的逻辑
       uni.showModal({
         title: '退出登录',
         content: '确定要退出登录吗？',
         success: (res) => {
           if (res.confirm) {
-            console.log('退出登录');
-            // 跳转到登录页面
-            uni.navigateTo({
+            uni.reLaunch({
               url: '/pages/login/index/index'
             });
           }
@@ -139,10 +137,9 @@ export default {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.user-avatar img {
+.user-avatar .user-avatar-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 
 .user-details {
@@ -204,7 +201,6 @@ export default {
   padding: 16px 20px;
   border-bottom: 1px solid #F1F3F5;
   transition: background 0.2s;
-  cursor: pointer;
 }
 
 .menu-item:last-child {
@@ -249,8 +245,6 @@ export default {
   font-size: 16px;
   font-weight: 600;
   color: #E53935;
-  cursor: pointer;
-  transition: all 0.2s;
   border: 1px solid #FFCDD2;
 }
 

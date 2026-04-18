@@ -1,0 +1,122 @@
+
+.page.data-v-b1dad14e {
+  width: 100%;
+  min-height: 100vh;
+  background: #F8F9FA;
+  padding-bottom: 32px;
+}
+.user-info.data-v-b1dad14e {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  padding: 32px 24px 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.user-avatar.data-v-b1dad14e {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.user-avatar .user-avatar-img.data-v-b1dad14e {
+  width: 100%;
+  height: 100%;
+}
+.user-details.data-v-b1dad14e {
+  flex: 1;
+  color: #fff;
+}
+.user-name.data-v-b1dad14e {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.user-id.data-v-b1dad14e {
+  font-size: 14px;
+  opacity: 0.9;
+}
+.user-stats.data-v-b1dad14e {
+  display: flex;
+  background: #fff;
+  margin: -24px 16px 24px;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  justify-content: space-around;
+}
+.stat-item.data-v-b1dad14e {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.stat-value.data-v-b1dad14e {
+  font-size: 20px;
+  font-weight: 700;
+  color: #212529;
+}
+.stat-label.data-v-b1dad14e {
+  font-size: 12px;
+  color: #6C757D;
+  font-weight: 500;
+}
+.menu-section.data-v-b1dad14e {
+  background: #fff;
+  margin: 0 16px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+.menu-item.data-v-b1dad14e {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #F1F3F5;
+  transition: background 0.2s;
+}
+.menu-item.data-v-b1dad14e:last-child {
+  border-bottom: none;
+}
+.menu-item.data-v-b1dad14e:active {
+  background: #F8F9FA;
+}
+.menu-icon.data-v-b1dad14e {
+  font-size: 20px;
+  margin-right: 16px;
+  width: 24px;
+  text-align: center;
+}
+.menu-text.data-v-b1dad14e {
+  flex: 1;
+  font-size: 16px;
+  color: #212529;
+  font-weight: 500;
+}
+.menu-arrow.data-v-b1dad14e {
+  font-size: 14px;
+  color: #ADB5BD;
+  transition: transform 0.2s;
+}
+.menu-item:active .menu-arrow.data-v-b1dad14e {
+  transform: translateX(4px);
+}
+.logout-btn.data-v-b1dad14e {
+  margin: 0 16px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #E53935;
+  border: 1px solid #FFCDD2;
+}
+.logout-btn.data-v-b1dad14e:active {
+  background: #FFEBEE;
+  transform: scale(0.98);
+}

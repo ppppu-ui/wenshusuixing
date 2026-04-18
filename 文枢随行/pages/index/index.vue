@@ -4,7 +4,28 @@
     <view class="header">
       <view class="search-box">
         <text class="search-icon">🔍</text>
-        <input type="text" class="search-input" placeholder="搜索目的地/景点/玩法" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="搜索目的地/景点/玩法"
+          v-model="searchKeyword"
+          confirm-type="search"
+          @confirm="handleSearch"
+        />
+        <text v-if="searchKeyword" class="search-clear" @click="clearSearch">×</text>
+      </view>
+
+      <view class="search-result" v-if="searchKeyword">
+        <view v-if="filteredResults.length === 0" class="empty-result">未找到相关内容</view>
+        <view
+          v-for="item in filteredResults"
+          :key="item.id"
+          class="result-item"
+          @click="goBySearchResult(item)"
+        >
+          <text class="result-type">{{ item.typeText }}</text>
+          <text class="result-title">{{ item.title }}</text>
+        </view>
       </view>
     </view>
 
@@ -67,20 +88,25 @@
         </view>
       </view>
       <view class="card-list">
-        <view class="trip-card" @click="goToTripDetail">
+        <view
+          v-for="(trip, index) in expertTripsDisplay"
+          :key="trip.id || index"
+          class="trip-card"
+          @click="goToTripDetail(trip.id)"
+        >
           <view class="trip-card-image">
-            <view class="image-placeholder" style="background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);">
-              <text class="landscape-icon">🏛️</text>
+            <view class="image-placeholder" :style="trip.coverStyle">
+              <text class="landscape-icon">{{ trip.icon || '🗺️' }}</text>
             </view>
-            <view class="trip-card-tag">文化游</view>
+            <view class="trip-card-tag" :class="{ 'tag-food': trip.tagType === 'food' }">{{ trip.tag }}</view>
           </view>
           <view class="trip-card-content">
-            <view class="trip-card-title">西安3日非遗文化游</view>
-            <view class="trip-card-desc">达人认证 · 兵马俑+古城墙+非遗体验</view>
+            <view class="trip-card-title">{{ trip.title }}</view>
+            <view class="trip-card-desc">{{ trip.desc }}</view>
             <view class="trip-card-footer">
               <view class="trip-card-price">
                 <text class="price-unit">¥</text>
-                <text class="price-num">800</text>
+                <text class="price-num">{{ trip.price }}</text>
                 <text class="price-text">/人起</text>
               </view>
               <view class="trip-card-badge">
@@ -91,29 +117,7 @@
           </view>
         </view>
 
-        <view class="trip-card" @click="goToTripDetail">
-          <view class="trip-card-image">
-            <view class="image-placeholder" style="background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);">
-              <text class="landscape-icon">🍜</text>
-            </view>
-            <view class="trip-card-tag tag-food">美食游</view>
-          </view>
-          <view class="trip-card-content">
-            <view class="trip-card-title">成都2日美食休闲游</view>
-            <view class="trip-card-desc">达人认证 · 宽窄巷子+锦里+本地火锅</view>
-            <view class="trip-card-footer">
-              <view class="trip-card-price">
-                <text class="price-unit">¥</text>
-                <text class="price-num">600</text>
-                <text class="price-text">/人起</text>
-              </view>
-              <view class="trip-card-badge">
-                <text class="badge-icon">✓</text>
-                <text>达人预审</text>
-              </view>
-            </view>
-          </view>
-        </view>
+        <view class="empty-result" v-if="expertTripsDisplay.length === 0">暂无达人行程数据</view>
       </view>
     </view>
 
@@ -162,12 +166,177 @@
 </template>
 
 <script>
+const BASE_URL = 'http://10.158.14.40:8080';
+
 export default {
   data() {
     return {
+      searchKeyword: '',
+      expertTrips: [],
+      searchSource: [
+        {
+          id: 'trip-xian',
+          type: 'trip',
+          typeText: '达人行程',
+          title: '西安3日非遗文化游',
+          keywords: ['西安', '非遗', '兵马俑', '文化'],
+          route: '/pages/trip/detail/index?id=daren-xian-3d&source=daren'
+        },
+        {
+          id: 'trip-chengdu',
+          type: 'trip',
+          typeText: '达人行程',
+          title: '成都2日美食休闲游',
+          keywords: ['成都', '美食', '火锅', '锦里'],
+          route: '/pages/trip/detail/index?id=daren-chengdu-2d&source=daren'
+        },
+        {
+          id: 'spot-bingmayong',
+          type: 'spot',
+          typeText: '热门打卡',
+          title: '秦始皇兵马俑博物馆',
+          keywords: ['兵马俑', '博物馆', '西安', '打卡'],
+          route: '/pages/checkin/detail/index'
+        },
+        {
+          id: 'entry-nav',
+          type: 'feature',
+          typeText: '功能入口',
+          title: '景区导航',
+          keywords: ['导航', '地图', '景区'],
+          route: '/pages/navigation/index/index'
+        },
+        {
+          id: 'entry-ai',
+          type: 'feature',
+          typeText: '功能入口',
+          title: 'AI智能定制',
+          keywords: ['ai', '智能', '定制', '行程'],
+          route: '/pages/ai-trip/index/index'
+        }
+      ]
     };
   },
+  computed: {
+    mergedSearchSource() {
+      const baseSource = this.searchSource.filter(item => item.type !== 'trip');
+      const tripSource = this.expertTripsDisplay.map((trip, index) => ({
+        id: `trip-dynamic-${trip.id || index}`,
+        type: 'trip',
+        typeText: '达人行程',
+        title: trip.title,
+        keywords: [trip.title, trip.tag || '', trip.desc || ''].filter(Boolean),
+        route: `/pages/trip/detail/index?id=${trip.id}&source=daren`
+      }));
+      return [...tripSource, ...baseSource];
+    },
+    filteredResults() {
+      const keyword = this.searchKeyword.trim().toLowerCase();
+      if (!keyword) return [];
+      return this.mergedSearchSource.filter(item => {
+        const inTitle = item.title.toLowerCase().includes(keyword);
+        const inKeywords = item.keywords.some(k => String(k).toLowerCase().includes(keyword));
+        return inTitle || inKeywords;
+      });
+    },
+    expertTripsDisplay() {
+      if (this.expertTrips.length > 0) {
+        return this.expertTrips;
+      }
+      return [
+        {
+          id: 'daren-xian-3d',
+          title: '西安3日非遗文化游',
+          desc: '达人认证 · 兵马俑+古城墙+非遗体验',
+          tag: '文化游',
+          tagType: 'culture',
+          price: 800,
+          icon: '🏛️',
+          coverStyle: 'background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);'
+        },
+        {
+          id: 'daren-chengdu-2d',
+          title: '成都2日美食休闲游',
+          desc: '达人认证 · 宽窄巷子+锦里+本地火锅',
+          tag: '美食游',
+          tagType: 'food',
+          price: 600,
+          icon: '🍜',
+          coverStyle: 'background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);'
+        }
+      ];
+    }
+  },
+  onShow() {
+    this.fetchExpertTrips();
+  },
   methods: {
+    fetchExpertTrips() {
+      const token = uni.getStorageSync('token');
+      uni.request({
+        url: `${BASE_URL}/api/trip/expert-selected`,
+        method: 'GET',
+        header: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        data: {
+          page: 1,
+          size: 2
+        },
+        success: (res) => {
+          const resp = res.data || {};
+          if (res.statusCode !== 200) return;
+          if (resp.code && resp.code !== 200) return;
+
+          const list = this.extractListFromResponse(resp.data);
+          this.expertTrips = list.map((item, idx) => this.mapExpertTrip(item, idx)).filter(Boolean);
+        }
+      });
+    },
+    extractListFromResponse(data) {
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.records)) return data.records;
+      if (data && Array.isArray(data.list)) return data.list;
+      if (data && Array.isArray(data.items)) return data.items;
+      return [];
+    },
+    mapExpertTrip(item, idx) {
+      if (!item || typeof item !== 'object') return null;
+      const fallbackId = idx === 0 ? 'daren-xian-3d' : `daren-expert-${idx + 1}`;
+      const title = item.title || item.tripTitle || item.name || '达人推荐行程';
+      const price = Number(item.price || item.budgetPerPerson || item.budget || 0) || 0;
+      const tagRaw = item.interest || item.category || item.tag || '';
+      const tag = tagRaw || '精选游';
+      const tagType = /美食/.test(tag) ? 'food' : 'culture';
+      return {
+        id: item.id || fallbackId,
+        title,
+        desc: item.description || item.summary || '达人认证 · 精选路线推荐',
+        tag,
+        tagType,
+        price,
+        icon: tagType === 'food' ? '🍜' : '🏛️',
+        coverStyle: tagType === 'food'
+          ? 'background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);'
+          : 'background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);'
+      };
+    },
+    handleSearch() {
+      if (!this.searchKeyword.trim()) return;
+      if (this.filteredResults.length === 1) {
+        this.goBySearchResult(this.filteredResults[0]);
+      }
+    },
+    clearSearch() {
+      this.searchKeyword = '';
+    },
+    goBySearchResult(item) {
+      uni.navigateTo({
+        url: item.route
+      });
+      this.searchKeyword = '';
+    },
     goToAiTrip() {
       uni.navigateTo({
         url: '/pages/ai-trip/index/index'
@@ -193,9 +362,9 @@ export default {
         url: '/pages/navigation/index/index'
       });
     },
-    goToTripDetail() {
-      uni.switchTab({
-        url: '/pages/trip/index/index'
+    goToTripDetail(id) {
+      uni.navigateTo({
+        url: `/pages/trip/detail/index?id=${id}&source=daren`
       });
     },
     goToCheckinDetail() {
@@ -240,6 +409,58 @@ export default {
   flex: 1;
   font-size: 14px;
   color: #2C3E50;
+}
+
+.search-clear {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #D0D7D2;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 22px;
+  font-size: 14px;
+}
+
+.search-result {
+  margin-top: 10px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid #E8EDE9;
+  max-height: 220px;
+  overflow: hidden;
+}
+
+.result-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid #F0F3F1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.result-type {
+  font-size: 11px;
+  color: #5FB878;
+  background: #E8F5E9;
+  border-radius: 10px;
+  padding: 2px 8px;
+  margin-right: 8px;
+}
+
+.result-title {
+  font-size: 13px;
+  color: #2C3E50;
+}
+
+.empty-result {
+  padding: 12px;
+  font-size: 13px;
+  color: #95A5A6;
 }
 
 /* AI智能定制 Banner */

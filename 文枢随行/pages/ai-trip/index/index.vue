@@ -315,55 +315,103 @@ export default {
         });
         return;
       }
-      
-      this.isLoading = true;
-      
-      // 模拟AI规划过程
-      setTimeout(() => {
-        this.isLoading = false;
-        
-        // 保存生成的行程数据
-        const generatedTrip = {
-          title: `${this.formData.destination}${this.formData.days}日文化游`,
-          days: this.formData.days >= 8 ? 7 : this.formData.days,
-          budgetPerPerson: parseInt(this.formData.budget),
-          totalBudget: parseInt(this.formData.budget) * 3, // 假设3人
-          daysList: this.generateMockItinerary()
-        };
-        uni.setStorageSync('generatedTripData', generatedTrip);
-        
-        // 跳转到AI生成结果页
-        uni.navigateTo({
-          url: '/pages/ai-trip/result/index'
-        });
-      }, 1500);
-    },
-    generateMockItinerary() {
-      // 生成模拟行程数据
-      const days = this.formData.days >= 8 ? 7 : this.formData.days;
-      const itinerary = [];
-      const routes = ['兵马俑 → 华清宫', '古城墙 → 大雁塔', '陕西历史博物馆 → 小雁塔', '钟鼓楼 → 回民街', '华山一日游', '大明宫 → 曲江池', '永兴坊 → 碑林'];
-      
-      for (let i = 0; i < days && i < routes.length; i++) {
-        itinerary.push({
-          route: routes[i],
-          spots: [
-            { 
-              name: `景点${i * 2 + 1}`, 
-              duration: '2小时',
-              desc: '精彩景点，值得一游',
-              tags: ['必打卡']
-            },
-            { 
-              name: `景点${i * 2 + 2}`, 
-              duration: '1.5小时',
-              desc: '特色体验',
-              tags: ['推荐']
-            }
-          ]
-        });
+
+      const BASE_URL = 'http://10.158.14.40:8080';
+      const token = uni.getStorageSync('token');
+      const travelDays = this.formData.days >= 8 ? 7 : this.formData.days;
+      const startDate = this.formatDate(new Date());
+      const endDate = this.formatDate(new Date(Date.now() + (travelDays - 1) * 24 * 60 * 60 * 1000));
+
+      const interestMap = {
+        culture: '文化古迹',
+        food: '美食',
+        nature: '自然风光',
+        niche: '小众秘境',
+        family: '亲子家庭',
+        hiking: '户外徒步'
+      };
+
+      const interests = this.selectedInterests.map(item => interestMap[item] || item);
+      if (this.formData.customInterest && interests.length < 3) {
+        interests.push(this.formData.customInterest.trim());
       }
-      return itinerary;
+
+      this.isLoading = true;
+
+      uni.request({
+        url: `${BASE_URL}/api/trip/ai-generate`,
+        method: 'POST',
+        header: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        data: {
+          city: this.formData.destination.trim(),
+          startDate,
+          endDate,
+          travelers: 1,
+          budget: Number(this.formData.budget),
+          interests
+        },
+        success: (res) => {
+          const resp = res.data || {};
+          if (res.statusCode === 200 && resp.code === 200 && resp.data) {
+            const generatedTrip = this.mapAiResponseToTripData(resp.data);
+            uni.setStorageSync('generatedTripData', generatedTrip);
+            uni.navigateTo({
+              url: '/pages/ai-trip/result/index'
+            });
+            return;
+          }
+
+          uni.showToast({
+            title: resp.message || '生成失败，请稍后重试',
+            icon: 'none'
+          });
+        },
+        fail: () => {
+          uni.showToast({
+            title: '网络异常，请检查后端服务',
+            icon: 'none'
+          });
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
+    },
+    formatDate(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    },
+    mapAiResponseToTripData(data) {
+      const dayList = (data.days || []).map(day => {
+        const spots = (day.items || []).map(item => {
+          const [startTime = '', endTime = ''] = (item.timeRange || '').split('-').map(v => v.trim());
+          return {
+            name: item.title || '未命名景点',
+            duration: startTime && endTime ? `${startTime}-${endTime}` : '时间待定',
+            desc: item.type === 'SCENE' ? '景点游览' : '活动安排',
+            tags: [item.type || 'AI推荐']
+          };
+        });
+
+        return {
+          route: spots.map(s => s.name).join(' → ') || `第${day.dayNumber || 1}天行程`,
+          spots
+        };
+      });
+
+      const budgetPerPerson = Number(this.formData.budget) || 0;
+      return {
+        title: data.title || `${this.formData.destination}${this.formData.days}日游`,
+        days: Number(data.dayCount) || dayList.length || (this.formData.days >= 8 ? 7 : this.formData.days),
+        budgetPerPerson,
+        totalBudget: budgetPerPerson,
+        daysList: dayList
+      };
     }
   }
 };

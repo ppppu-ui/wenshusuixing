@@ -56,13 +56,16 @@
 </template>
 
 <script>
+const BASE_URL = 'http://10.158.14.40:8080';
+
 export default {
   data() {
     return {
       question: '',
       location: '',
       tags: ['行程规划', '景点推荐', '美食攻略', '交通出行', '住宿推荐', '门票信息', '当地文化', '安全提示'],
-      selectedTags: []
+      selectedTags: [],
+      isSubmitting: false
     };
   },
   methods: {
@@ -95,6 +98,8 @@ export default {
       });
     },
     submitQuestion() {
+      if (this.isSubmitting) return;
+
       if (!this.question.trim()) {
         uni.showToast({
           title: '请输入问题内容',
@@ -102,18 +107,56 @@ export default {
         });
         return;
       }
-      // 提交问题的逻辑
-      console.log('提交问题', {
-        question: this.question,
-        location: this.location,
-        tags: this.selectedTags
+
+      if (!this.location.trim()) {
+        uni.showToast({
+          title: '请输入相关地点',
+          icon: 'none'
+        });
+        return;
+      }
+
+      const token = uni.getStorageSync('token');
+      const userInfo = uni.getStorageSync('userInfo') || {};
+
+      this.isSubmitting = true;
+
+      uni.request({
+        url: `${BASE_URL}/api/expert/question`,
+        method: 'POST',
+        header: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        data: {
+          userId: userInfo.id || userInfo.userId || undefined,
+          question: this.question.trim(),
+          city: this.location.trim(),
+          tags: this.selectedTags
+        },
+        success: (res) => {
+          const resp = res.data || {};
+          if (res.statusCode !== 200) {
+            uni.showToast({ title: '提交失败，请稍后重试', icon: 'none' });
+            return;
+          }
+          if (resp.code && resp.code !== 200) {
+            uni.showToast({ title: resp.message || '提交失败', icon: 'none' });
+            return;
+          }
+
+          uni.showToast({ title: '问题提交成功', icon: 'success' });
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 800);
+        },
+        fail: () => {
+          uni.showToast({ title: '网络异常，提交失败', icon: 'none' });
+        },
+        complete: () => {
+          this.isSubmitting = false;
+        }
       });
-      uni.showToast({
-        title: '问题提交成功',
-        icon: 'success'
-      });
-      // 跳转到服务页面
-      uni.navigateBack();
     }
   }
 };

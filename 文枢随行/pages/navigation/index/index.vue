@@ -247,6 +247,8 @@
 </template>
 
 <script>
+const BASE_URL = 'http://10.158.14.40:8080';
+
 export default {
   data() {
     return {
@@ -255,44 +257,9 @@ export default {
       scale: 1,
       markerPosition: { x: 50, y: 50 },
       touchStartData: { x: 0, y: 0, distance: 0 },
-      attractions: [
-        {
-          name: '铜车马展厅',
-          status: 'open',
-          statusText: '开放中',
-          distance: 200,
-          walkTime: 3,
-          tags: ['必看', '文化', '镇馆之宝'],
-          isCollected: false
-        },
-        {
-          name: '兵马俑一号坑',
-          status: 'open',
-          statusText: '开放中',
-          distance: 350,
-          walkTime: 5,
-          tags: ['世界遗产', '必打卡'],
-          isCollected: true
-        },
-        {
-          name: '兵马俑三号坑',
-          status: 'crowded',
-          statusText: '拥挤',
-          distance: 500,
-          walkTime: 7,
-          tags: ['历史', '考古'],
-          isCollected: false
-        },
-        {
-          name: '秦始皇陵',
-          status: 'open',
-          statusText: '开放中',
-          distance: 1200,
-          walkTime: 15,
-          tags: ['世界遗产', '历史'],
-          isCollected: false
-        }
-      ]
+      destinationId: '16',
+      loadingFacilities: false,
+      attractions: []
     };
   },
   computed: {
@@ -303,61 +270,115 @@ export default {
       };
     }
   },
+  onLoad(options) {
+    if (options && options.destinationId) {
+      this.destinationId = String(options.destinationId);
+    }
+    // 首屏默认加载一个稳定类型，避免空type触发后端异常
+    this.searchKeyword = '卫生间';
+    this.fetchFacilities('卫生间');
+  },
   methods: {
     goBack() {
-      uni.navigateBack();
+      const pages = getCurrentPages();
+      if (pages.length > 1) {
+        uni.navigateBack();
+      } else {
+        uni.switchTab({ url: '/pages/index/index' });
+      }
     },
     clearSearch() {
       this.searchKeyword = '';
+      uni.showToast({ title: '请输入并搜索设施类型', icon: 'none' });
     },
     handleSearch() {
-      if (!this.searchKeyword.trim()) {
-        uni.showToast({
-          title: '请输入搜索内容',
-          icon: 'none'
-        });
+      const keyword = this.searchKeyword.trim();
+      if (!keyword) {
+        uni.showToast({ title: '输入不为空', icon: 'none' });
         return;
       }
-      uni.showToast({
-        title: `搜索: ${this.searchKeyword}`,
-        icon: 'none'
-      });
+      this.fetchFacilities(keyword);
     },
-    downloadMap() {
-      uni.navigateTo({
-        url: '/pages/navigation/offline-map/offline-map',
+    fetchFacilities(type = '') {
+      if (this.loadingFacilities) return;
+      this.loadingFacilities = true;
+
+      const token = uni.getStorageSync('token');
+      uni.request({
+        url: `${BASE_URL}/api/scene/facility`,
+        method: 'GET',
+        header: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        data: {
+          destinationId: this.destinationId,
+          ...(type ? { type } : {})
+        },
+        success: (res) => {
+          const resp = res.data || {};
+          if (res.statusCode !== 200) {
+            uni.showToast({ title: '景区设施加载失败', icon: 'none' });
+            return;
+          }
+          if (resp.code && resp.code !== 200) {
+            uni.showToast({ title: resp.message || '查询失败', icon: 'none' });
+            return;
+          }
+
+          const list = Array.isArray(resp.data) ? resp.data : [];
+          this.attractions = list.map((item, idx) => this.mapFacilityItem(item, idx));
+        },
         fail: () => {
-          uni.showToast({
-            title: '页面开发中',
-            icon: 'none'
-          });
+          uni.showToast({ title: '网络异常，无法加载设施', icon: 'none' });
+        },
+        complete: () => {
+          this.loadingFacilities = false;
         }
       });
     },
-    zoomIn() {
-      if (this.scale < 3) {
-        this.scale += 0.5;
+    mapFacilityItem(item, idx) {
+      const crowdLevel = String(item.crowdLevel || '').toUpperCase();
+      let status = 'open';
+      let statusText = '开放中';
+      if (crowdLevel === 'HIGH') {
+        status = 'crowded';
+        statusText = '拥挤';
       }
+
+      const distanceNum = Number(item.distance || item.distanceMeters || 0);
+      return {
+        id: item.id || idx,
+        name: item.name || item.facilityName || '未命名设施',
+        status,
+        statusText,
+        distance: distanceNum || 0,
+        walkTime: Math.max(1, Math.round((distanceNum || 200) / 80)),
+        tags: Array.isArray(item.tags) && item.tags.length ? item.tags : [item.type || '设施'],
+        isCollected: false,
+        raw: item
+      };
+    },
+    downloadMap() {
+      uni.showToast({
+        title: '离线地图下载开发中',
+        icon: 'none'
+      });
+    },
+    zoomIn() {
+      if (this.scale < 3) this.scale += 0.5;
     },
     zoomOut() {
-      if (this.scale > 1) {
-        this.scale -= 0.5;
-      }
+      if (this.scale > 1) this.scale -= 0.5;
     },
     centerMap() {
       uni.getLocation({
         type: 'gcj02',
-        success: (res) => {
-          uni.showToast({
-            title: '已定位到当前位置',
-            icon: 'success'
-          });
+        success: () => {
+          uni.showToast({ title: '已定位到当前位置', icon: 'success' });
         },
         fail: () => {
-          uni.showToast({
-            title: '定位失败，请检查权限',
-            icon: 'none'
-          });
+          uni.showToast({ title: '定位失败，请检查权限', icon: 'none' });
         }
       });
     },
@@ -374,94 +395,50 @@ export default {
     },
     touchMove(e) {
       const touches = e.touches;
-      if (touches.length === 2) {
+      if (touches.length === 2 && this.touchStartData.distance) {
         const x = touches[0].clientX - touches[1].clientX;
         const y = touches[0].clientY - touches[1].clientY;
         const distance = Math.sqrt(x * x + y * y);
-        const scale = distance / this.touchStartData.distance;
-        this.scale = Math.min(Math.max(this.scale * scale, 1), 3);
+        const ratio = distance / this.touchStartData.distance;
+        this.scale = Math.min(Math.max(this.scale * ratio, 1), 3);
         this.touchStartData.distance = distance;
       }
     },
-    touchEnd(e) {
-      // 处理拖拽结束
-    },
+    touchEnd() {},
     findToilet() {
-      uni.showToast({
-        title: '已显示附近卫生间',
-        icon: 'none'
-      });
+      this.searchKeyword = '卫生间';
+      this.fetchFacilities('卫生间');
     },
     findRestaurant() {
-      uni.showToast({
-        title: '已显示附近餐厅',
-        icon: 'none'
-      });
+      this.searchKeyword = '餐厅';
+      this.fetchFacilities('餐厅');
     },
     findMedical() {
-      uni.showToast({
-        title: '已显示附近医疗点',
-        icon: 'none'
-      });
+      this.searchKeyword = '医疗点';
+      this.fetchFacilities('医疗点');
     },
     findParking() {
-      uni.showToast({
-        title: '已显示附近停车场',
-        icon: 'none'
-      });
+      this.searchKeyword = '停车场';
+      this.fetchFacilities('停车场');
     },
     findEntrance() {
-      uni.showToast({
-        title: '已显示出入口位置',
-        icon: 'none'
-      });
+      this.searchKeyword = '出入口';
+      this.fetchFacilities('出入口');
     },
     switchToOnline() {
-      uni.showModal({
-        title: '切换模式',
-        content: '是否切换到在线导航模式？',
-        success: (res) => {
-          if (res.confirm) {
-            uni.showToast({
-              title: '已切换至在线模式',
-              icon: 'success'
-            });
-          }
-        }
-      });
+      uni.showToast({ title: '已切换在线导航模式', icon: 'none' });
     },
     viewMore() {
-      uni.showToast({
-        title: '查看更多景点',
-        icon: 'none'
-      });
+      this.fetchFacilities(this.searchKeyword.trim());
     },
     viewDetail(item) {
-      uni.navigateTo({
-        url: `/pages/attraction/detail?name=${item.name}`
-      });
+      uni.showToast({ title: `${item.name}`, icon: 'none' });
     },
     toggleCollect(index) {
-      const item = this.attractions[index];
-      item.isCollected = !item.isCollected;
-      uni.showToast({
-        title: item.isCollected ? '已收藏' : '取消收藏',
-        icon: 'none'
-      });
+      this.attractions[index].isCollected = !this.attractions[index].isCollected;
     },
     navigateTo(item) {
-      uni.showModal({
-        title: '开始导航',
-        content: `是否开始导航到${item.name}？`,
-        success: (res) => {
-          if (res.confirm) {
-            uni.showToast({
-              title: '开始导航',
-              icon: 'success'
-            });
-          }
-        }
-      });
+      uni.showToast({ title: `导航到 ${item.name}`, icon: 'none' });
     }
   }
 };
@@ -472,6 +449,8 @@ export default {
 .page {
   min-height: 100vh;
   background-color: #F8FAF9;
+  display: flex;
+  flex-direction: column;
 }
 
 /* SVG图标基础样式 */
@@ -482,7 +461,9 @@ export default {
 
 /* 顶部导航栏 - 浅青绿色渐变 */
 .header-nav {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 50;
   overflow: hidden;
 }
 
@@ -507,5 +488,289 @@ export default {
 .nav-content {
   position: relative;
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 48px 16px 16px;
 }
+
+.back-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.7);
+}
+
+.nav-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2C3E50;
+}
+
+.nav-placeholder {
+  width: 36px;
+}
+
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #F8FAF9;
+}
+
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 8px 12px;
+  border: 1px solid #E8EDE9;
+}
+
+.search-box.is-focused {
+  border-color: #5FB878;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 14px;
+  color: #2C3E50;
+}
+
+.search-clear {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FF8A80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid #E8EDE9;
+  font-size: 12px;
+  color: #2C3E50;
+}
+
+.map-container {
+  position: relative;
+  margin: 0 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #FFFFFF;
+  border: 1px solid #E8EDE9;
+}
+
+.map-image {
+  width: 100%;
+  height: 220px;
+}
+
+.map-marker {
+  position: absolute;
+}
+
+.map-controls {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.map-scale {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  background: rgba(0,0,0,0.55);
+  color: #FFFFFF;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+.facilities-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px 4px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.facility-item {
+  flex: 1 0 18%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.facility-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #E8EDE9;
+  margin-bottom: 4px;
+}
+
+.facility-name {
+  font-size: 12px;
+  color: #2C3E50;
+}
+
+.offline-bar {
+  margin: 8px 16px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid #E8EDE9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.offline-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #5D6D7E;
+}
+
+.offline-action {
+  font-size: 12px;
+  color: #5FB878;
+}
+
+.nearby-section {
+  padding: 0 16px 16px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2C3E50;
+}
+
+.attraction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.attraction-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  border: 1px solid #E8EDE9;
+  padding: 12px;
+}
+
+.card-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.attraction-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.status-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #E8F5E9;
+  color: #5FB878;
+}
+
+.status-badge.crowded {
+  background: #FFF3E0;
+  color: #FF9A56;
+}
+
+.info-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #5D6D7E;
+  margin-top: 6px;
+}
+
+.info-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tag {
+  font-size: 11px;
+  color: #5FB878;
+  background: #E8F5E9;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.card-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav-btn-primary {
+  background: #5FB878;
+  color: #FFFFFF;
+  border-radius: 14px;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.bottom-space {
+  height: 24px;
+}
+
 </style>

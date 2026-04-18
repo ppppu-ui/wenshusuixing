@@ -15,9 +15,9 @@
       <div class="daren-trip-filter-item" @click="filterByType('nature')">自然风光</div>
     </div>
     <div class="daren-trip-list">
-      <div class="daren-trip-item" @click="goToTripDetail">
+      <div class="daren-trip-item" @click="goToTripDetail('daren-xian-3d')">
         <div class="daren-trip-item-image">
-          <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%20Xi%20an%20ancient%20history%20cultural%20relic&image_size=landscape_16_9" alt="西安非遗文化之旅" />
+          <image class="daren-cover" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%20Xi%20an%20ancient%20history%20cultural%20relic&image_size=landscape_16_9" mode="aspectFill" />
           <div class="daren-trip-item-tag">文化体验</div>
         </div>
         <div class="daren-trip-item-content">
@@ -30,7 +30,7 @@
           <div class="daren-trip-item-desc">探访兵马俑、华清宫，体验传统手工艺，品尝地道陕西美食</div>
           <div class="daren-trip-item-daren">
             <div class="daren-trip-item-daren-avatar">
-              <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20guide%20portrait%20friendly%20smile&image_size=square" alt="达人头像" />
+              <image class="daren-avatar" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20guide%20portrait%20friendly%20smile&image_size=square" mode="aspectFill" />
             </div>
             <div class="daren-trip-item-daren-info">
               <div class="daren-trip-item-daren-name">西安老陕</div>
@@ -39,9 +39,9 @@
           </div>
         </div>
       </div>
-      <div class="daren-trip-item" @click="goToTripDetail">
+      <div class="daren-trip-item" @click="goToTripDetail('daren-chengdu-2d')">
         <div class="daren-trip-item-image">
-          <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chengdu%20food%20hotpot%20Sichuan%20cuisine&image_size=landscape_16_9" alt="成都美食之旅" />
+          <image class="daren-cover" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chengdu%20food%20hotpot%20Sichuan%20cuisine&image_size=landscape_16_9" mode="aspectFill" />
           <div class="daren-trip-item-tag">美食之旅</div>
         </div>
         <div class="daren-trip-item-content">
@@ -54,7 +54,7 @@
           <div class="daren-trip-item-desc">打卡宽窄巷子、锦里，品尝正宗川菜，体验成都慢生活</div>
           <div class="daren-trip-item-daren">
             <div class="daren-trip-item-daren-avatar">
-              <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=food%20blogger%20portrait%20friendly%20smile&image_size=square" alt="达人头像" />
+              <image class="daren-avatar" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=food%20blogger%20portrait%20friendly%20smile&image_size=square" mode="aspectFill" />
             </div>
             <div class="daren-trip-item-daren-info">
               <div class="daren-trip-item-daren-name">成都美食家</div>
@@ -63,9 +63,9 @@
           </div>
         </div>
       </div>
-      <div class="daren-trip-item" @click="goToTripDetail">
+      <div class="daren-trip-item" @click="goToTripDetail('daren-guilin-4d')">
         <div class="daren-trip-item-image">
-          <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20landscape%20karst%20mountains%20Li%20River&image_size=landscape_16_9" alt="桂林山水之旅" />
+          <image class="daren-cover" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20landscape%20karst%20mountains%20Li%20River&image_size=landscape_16_9" mode="aspectFill" />
           <div class="daren-trip-item-tag">自然风光</div>
         </div>
         <div class="daren-trip-item-content">
@@ -78,7 +78,7 @@
           <div class="daren-trip-item-desc">游览漓江、阳朔，体验竹筏漂流，欣赏山水田园风光</div>
           <div class="daren-trip-item-daren">
             <div class="daren-trip-item-daren-avatar">
-              <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=travel%20blogger%20portrait%20friendly%20smile&image_size=square" alt="达人头像" />
+              <image class="daren-avatar" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=travel%20blogger%20portrait%20friendly%20smile&image_size=square" mode="aspectFill" />
             </div>
             <div class="daren-trip-item-daren-info">
               <div class="daren-trip-item-daren-name">山水客</div>
@@ -107,10 +107,9 @@ export default {
       // 筛选行程的逻辑
       console.log('筛选类型:', type);
     },
-    goToTripDetail() {
-      // 跳转到行程详情页面（tabBar页面使用switchTab）
-      uni.switchTab({
-        url: '/pages/trip/trip'
+    goToTripDetail(id) {
+      uni.navigateTo({
+        url: `/pages/trip/detail/index?id=${id}&source=daren`
       });
     }
   }
@@ -246,14 +245,13 @@ export default {
   overflow: hidden;
 }
 
-.daren-trip-item-image img {
+.daren-trip-item-image .daren-cover {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   transition: transform 0.3s;
 }
 
-.daren-trip-item:active .daren-trip-item-image img {
+.daren-trip-item:active .daren-trip-item-image .daren-cover {
   transform: scale(1.05);
 }
 
@@ -330,10 +328,9 @@ export default {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.daren-trip-item-daren-avatar img {
+.daren-trip-item-daren-avatar .daren-avatar {
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 
 .daren-trip-item-daren-info {

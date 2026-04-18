@@ -254,7 +254,7 @@ export default {
       return this.tripData.daysList.reduce((total, day) => total + day.spots.length, 0);
     }
   },
-  onLoad(options) {
+  onLoad() {
     // 加载AI生成的行程数据
     this.loadGeneratedTripData();
   },
@@ -276,7 +276,7 @@ export default {
     },
     goToNavigation() {
       uni.navigateTo({
-        url: '/pages/navigation/navigation'
+        url: '/pages/navigation/index/index'
       });
     },
     toggleDay(dayIndex) {
@@ -351,29 +351,49 @@ export default {
     },
     confirmTrip() {
       // 保存行程到"我的行程"
-      const savedTrips = uni.getStorageSync('myTrips') || [];
+      let savedTrips = uni.getStorageSync('myTrips');
+      if (!Array.isArray(savedTrips)) {
+        savedTrips = [];
+      }
+
       const newTrip = {
         id: Date.now(),
         title: this.tripData.title || '未命名行程',
         days: this.tripData.days || 3,
         budget: this.tripData.totalBudget || 2400,
         spots: this.totalSpots || 0,
-        createTime: new Date().toISOString()
+        createTime: new Date().toISOString(),
+        // 详情页需要的完整结构一并保留
+        budgetPerPerson: this.tripData.budgetPerPerson || 0,
+        totalBudget: this.tripData.totalBudget || 0,
+        daysList: Array.isArray(this.tripData.daysList) ? this.tripData.daysList : []
       };
+
       savedTrips.unshift(newTrip);
       uni.setStorageSync('myTrips', savedTrips);
-      
+      uni.setStorageSync('latestConfirmedTrip', newTrip);
+
+      // 写入后立即校验，确保保存成功
+      const verifyTrips = uni.getStorageSync('myTrips');
+      if (!Array.isArray(verifyTrips) || verifyTrips.length === 0) {
+        uni.showToast({
+          title: '保存失败，请重试',
+          icon: 'none'
+        });
+        return;
+      }
+
       // 显示成功提示
       uni.showToast({
         title: '行程保存成功',
         icon: 'success',
         duration: 1500
       });
-      
+
       // 延迟跳转到行程列表页（使用switchTab跳转到tabBar页）
       setTimeout(() => {
         uni.switchTab({
-          url: '/pages/trip/trip'
+          url: '/pages/trip/index/index'
         });
       }, 1500);
     }

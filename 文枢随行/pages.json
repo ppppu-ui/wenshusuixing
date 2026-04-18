@@ -89,6 +89,12 @@
 			 "style": {
 				 "navigationBarTitleText": "问答详情"
 			 }
+		 },
+		 {
+			 "path": "pages/my/index/index",
+			 "style": {
+				 "navigationBarTitleText": "我的"
+			 }
 		 }
 	 ],
 	 "globalStyle": {

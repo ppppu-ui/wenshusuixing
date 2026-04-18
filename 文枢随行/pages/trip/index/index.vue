@@ -93,18 +93,59 @@ export default {
       touchMoveX: 0
     };
   },
+  onLoad() {
+    this.loadTripList();
+  },
   onShow() {
+    this.loadTripList();
+    this.openedIndex = -1;
+  },
+  onTabItemTap() {
     this.loadTripList();
     this.openedIndex = -1;
   },
   methods: {
     loadTripList() {
-      const savedTrips = uni.getStorageSync('myTrips') || [];
-      this.tripList = savedTrips.map(trip => ({
-        ...trip,
-        status: 'confirmed',
-        statusText: '已确认'
-      }));
+      let savedTrips = uni.getStorageSync('myTrips');
+
+      // 兼容异常存储格式（如字符串）
+      if (typeof savedTrips === 'string') {
+        try {
+          savedTrips = JSON.parse(savedTrips);
+        } catch (e) {
+          savedTrips = [];
+        }
+      }
+
+      if (!Array.isArray(savedTrips)) {
+        savedTrips = [];
+      }
+
+      // 兜底：若myTrips为空，尝试读取最近一次确认的行程
+      if (savedTrips.length === 0) {
+        const latestTrip = uni.getStorageSync('latestConfirmedTrip');
+        if (latestTrip && typeof latestTrip === 'object') {
+          savedTrips = [latestTrip];
+          uni.setStorageSync('myTrips', savedTrips);
+        }
+      }
+
+      this.tripList = savedTrips
+        .filter(trip => trip && typeof trip === 'object')
+        .map(trip => ({
+          ...trip,
+          id: trip.id || Date.now(),
+          title: trip.title || '未命名行程',
+          days: Number(trip.days) || 3,
+          spots: Number(trip.spots) || 0,
+          budget: Number(trip.budget) || 0,
+          createTime: trip.createTime || new Date().toISOString(),
+          status: 'confirmed',
+          statusText: '已确认'
+        }));
+
+      // 调试辅助：可在控制台确认列表长度
+      console.log('[trip] loaded list length:', this.tripList.length);
     },
     formatNumber(num) {
       return num.toLocaleString();
@@ -129,18 +170,23 @@ export default {
         return;
       }
       uni.navigateTo({
-        url: `/pages/trip/detail/index?id=${id}`
+        url: `/pages/trip/detail/index?id=${id}&source=my`
       });
     },
     touchStart(e) {
-      this.touchStartX = e.touches[0].clientX;
+      const x = e.touches[0].clientX;
+      this.touchStartX = x;
+      this.touchMoveX = x;
     },
     touchMove(e) {
       this.touchMoveX = e.touches[0].clientX;
     },
     touchEnd(e) {
-      const index = parseInt(e.currentTarget.dataset.index);
-      const diff = this.touchStartX - this.touchMoveX;
+      const endX = e.changedTouches && e.changedTouches[0]
+        ? e.changedTouches[0].clientX
+        : this.touchMoveX;
+      const index = parseInt(e.currentTarget.dataset.index, 10);
+      const diff = this.touchStartX - endX;
       
       if (Math.abs(diff) > 50) {
         if (diff > 0) {

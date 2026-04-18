@@ -32,38 +32,110 @@
         <span class="qa-input-placeholder">你有什么旅行问题？问问本地人～</span>
       </div>
       <div class="qa-list">
-        <div class="qa-item" @click="goToQADetail">
+        <div
+          class="qa-item"
+          v-for="item in qaListDisplay"
+          :key="item.id"
+          @click="goToQADetail(item)"
+        >
           <div class="qa-item-header">
-            <span class="qa-item-user">游客</span>
-            <span class="qa-item-time">2小时前</span>
-            <span class="qa-item-location">西安</span>
+            <span class="qa-item-user">{{ item.user }}</span>
+            <span class="qa-item-time">{{ item.time }}</span>
+            <span class="qa-item-location">{{ item.location }}</span>
           </div>
-          <div class="qa-item-question">西安兵马俑需要提前预约吗？现场能买票吗？</div>
-          <div class="qa-item-answer">
-            <div class="qa-item-answerer">本地达人「西安老陕」解答 ✅</div>
-            <div class="qa-item-answer-content">需要提前1-3天在官方公众号预约，现场无线下票口，节假日建议更早预约，避免没票～</div>
+          <div class="qa-item-question">{{ item.question }}</div>
+          <div class="qa-item-answer" v-if="item.answer">
+            <div class="qa-item-answerer">本地达人「{{ item.answerer }}」解答 ✅</div>
+            <div class="qa-item-answer-content">{{ item.answer }}</div>
           </div>
         </div>
-        <div class="qa-item">
-          <div class="qa-item-header">
-            <span class="qa-item-user">游客</span>
-            <span class="qa-item-time">5小时前</span>
-            <span class="qa-item-location">成都</span>
-          </div>
-          <div class="qa-item-question">成都本地人推荐的火锅店，不要网红店！</div>
-        </div>
+        <div class="qa-empty" v-if="qaListDisplay.length === 0">暂无问答数据</div>
       </div>
     </div>
   </view>
 </template>
 
 <script>
+const BASE_URL = 'http://10.158.14.40:8080';
+
 export default {
   data() {
     return {
+      qaList: []
     };
   },
+  onShow() {
+    this.fetchQaList();
+  },
+  computed: {
+    qaListDisplay() {
+      if (this.qaList.length > 0) return this.qaList;
+      return [
+        {
+          id: 'local-1',
+          user: '游客',
+          time: '2小时前',
+          location: '西安',
+          question: '西安兵马俑需要提前预约吗？现场能买票吗？',
+          answerer: '西安老陕',
+          answer: '需要提前1-3天在官方公众号预约，现场无线下票口，节假日建议更早预约，避免没票～'
+        },
+        {
+          id: 'local-2',
+          user: '游客',
+          time: '5小时前',
+          location: '成都',
+          question: '成都本地人推荐的火锅店，不要网红店！',
+          answerer: '',
+          answer: ''
+        }
+      ];
+    }
+  },
   methods: {
+    fetchQaList() {
+      const token = uni.getStorageSync('token');
+      const userInfo = uni.getStorageSync('userInfo') || {};
+      uni.request({
+        url: `${BASE_URL}/api/expert/question/list`,
+        method: 'GET',
+        header: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        data: {
+          userId: userInfo.id || userInfo.userId || undefined,
+          page: 1,
+          size: 10
+        },
+        success: (res) => {
+          const resp = res.data || {};
+          if (res.statusCode !== 200) return;
+          if (resp.code && resp.code !== 200) return;
+
+          const list = this.extractList(resp.data);
+          this.qaList = list.map(this.mapQaItem).filter(Boolean);
+        }
+      });
+    },
+    extractList(data) {
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.records)) return data.records;
+      if (data && Array.isArray(data.list)) return data.list;
+      if (data && Array.isArray(data.items)) return data.items;
+      return [];
+    },
+    mapQaItem(item) {
+      if (!item || typeof item !== 'object') return null;
+      return {
+        id: item.id || item.questionId,
+        user: item.userName || '游客',
+        time: item.createTimeText || '刚刚',
+        location: item.city || '未知地点',
+        question: item.question || item.content || '暂无问题内容',
+        answerer: item.expertName || '本地达人',
+        answer: item.answer || item.latestAnswer || ''
+      };
+    },
     goBack() {
       uni.navigateBack();
     },
@@ -91,9 +163,10 @@ export default {
         }
       });
     },
-    goToQADetail() {
+    goToQADetail(item) {
+      const id = item && item.id ? item.id : '';
       uni.navigateTo({
-        url: '/pages/service/qa-detail/index/index',
+        url: `/pages/service/qa-detail/index/index${id ? `?id=${id}` : ''}`,
         fail: (err) => {
           console.error('跳转失败:', err);
           uni.showToast({
@@ -328,5 +401,12 @@ export default {
   font-size: 13px;
   color: #495057;
   line-height: 1.4;
+}
+
+.qa-empty {
+  padding: 12px;
+  text-align: center;
+  color: #95A5A6;
+  font-size: 13px;
 }
 </style>
