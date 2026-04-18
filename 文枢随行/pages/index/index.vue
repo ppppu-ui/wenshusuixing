@@ -4,7 +4,7 @@
     <view class="header">
       <view class="search-box">
         <text class="search-icon">🔍</text>
-        <input type="text" class="search-input" placeholder="搜索目的地/景点/玩法">
+        <input type="text" class="search-input" placeholder="搜索目的地/景点/玩法" />
       </view>
     </view>
 

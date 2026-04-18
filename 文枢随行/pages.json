@@ -49,12 +49,6 @@
 			 }
 		 },
 		 {
-			 "path": "pages/my/index/index",
-			 "style": {
-				 "navigationBarTitleText": "我的"
-			 }
-		 },
-		 {
 			 "path": "pages/checkin/index/index",
 			 "style": {
 				 "navigationBarTitleText": "打卡任务"
@@ -120,10 +114,6 @@
 			 {
 				 "pagePath": "pages/service/index/index",
 				 "text": "服务"
-			 },
-			 {
-				 "pagePath": "pages/my/index/index",
-				 "text": "我的"
 			 }
 		 ]
 	 },
